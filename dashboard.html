@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم | أكاديمية النخبة للتعليم والتكوين</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+<style>
+.view-panel{display:none;} .view-panel.active{display:block;animation:fadeIn .18s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.sidebar-menu a[data-view].active{background:var(--accent);color:var(--primary-dark);font-weight:800;}
+
+.mini-stats-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:18px;}
+@media(max-width:1100px){.mini-stats-row{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:600px){.mini-stats-row{grid-template-columns:1fr 1fr;}}
+.mini-stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:13px;text-align:center;}
+.mini-stat b{display:block;font-size:18px;font-weight:800;} .mini-stat span{font-size:10px;color:var(--text-muted);font-weight:600;}
+
+.quick-actions-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:22px;}
+@media(max-width:900px){.quick-actions-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:500px){.quick-actions-grid{grid-template-columns:1fr 1fr;}}
+.quick-action-btn{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px 10px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:7px;}
+.quick-action-btn:hover{border-color:var(--accent);box-shadow:var(--shadow-sm);}
+.quick-action-btn i{width:34px;height:34px;background:var(--surface-soft);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--primary);}
+.quick-action-btn span{font-size:10.5px;font-weight:700;}
+
+.section-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:18px;margin-bottom:18px;}
+@media(max-width:1100px){.section-grid{grid-template-columns:1fr;}}
+.lesson-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--border);}
+.lesson-row:first-child{border-top:none;}
+.lesson-time{width:80px;font-size:11px;font-weight:800;color:var(--primary);flex-shrink:0;}
+.lesson-info b{font-size:12.8px;display:block;} .lesson-info span{font-size:10.5px;color:var(--text-muted);}
+.lesson-row .btns{margin-right:auto;display:flex;gap:6px;}
+
+.search-bar-wrap{position:relative;margin-bottom:14px;}
+.search-bar-wrap i{position:absolute;right:18px;top:50%;transform:translateY(-50%);color:var(--text-muted);}
+.search-bar-wrap input{width:100%;padding:13px 44px 13px 16px;border:1.5px solid var(--border);border-radius:12px;font-family:'Cairo',sans-serif;font-size:13.5px;background:var(--surface);box-shadow:var(--shadow-sm);}
+
+/* LEVEL CARDS (colorful, per stage) */
+.level-cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;}
+.level-card-big{border-radius:var(--radius-lg);padding:22px;color:#fff;cursor:pointer;transition:.15s;position:relative;overflow:hidden;}
+.level-card-big:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);}
+.level-card-big i{font-size:26px;margin-bottom:12px;opacity:.9;}
+.level-card-big h4{color:#fff;font-size:15px;margin-bottom:4px;}
+.level-card-big span{font-size:11px;color:rgba(255,255,255,0.8);}
+.stage-تحضيري{background:linear-gradient(135deg,#2d6a7f,#0f3a52);}
+.stage-ابتدائي{background:linear-gradient(135deg,#1f9d5c,#0f3a52);}
+.stage-متوسط{background:linear-gradient(135deg,#c9973f,#7a5a20);}
+.stage-ثانوي{background:linear-gradient(135deg,#0f3a52,#0a2738);}
+.stage-مخصص{background:linear-gradient(135deg,var(--secondary),var(--primary-dark));}
+
+.subject-chip-big{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:10px 16px;font-size:12.5px;font-weight:700;cursor:pointer;margin:4px;}
+.subject-chip-big:hover{border-color:var(--accent);}
+.subject-chip-big.active-subject{background:var(--primary);color:#fff;}
+
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
+.mini-card{background:var(--surface);border-radius:var(--radius-md);padding:16px;box-shadow:var(--shadow-sm);border:1px solid var(--border);cursor:pointer;transition:.15s;}
+.mini-card:hover{box-shadow:var(--shadow-md);border-color:var(--accent);}
+.mc-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.mc-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:var(--accent-light);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex-shrink:0;}
+.mc-name{font-size:13.5px;font-weight:800;} .mc-sub{font-size:11px;color:var(--text-muted);}
+.mc-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text-muted);padding:5px 0;border-top:1px dashed var(--border);}
+.mc-row b{color:var(--text);font-weight:700;}
+.mc-actions{display:flex;gap:6px;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.mc-actions button{flex:1;padding:6px;border-radius:7px;border:1px solid var(--border);background:var(--surface-soft);cursor:pointer;font-size:10.5px;color:var(--text-muted);}
+.mc-actions button:hover{border-color:var(--accent);color:var(--primary);}
+
+.lesson-file-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;cursor:pointer;text-align:center;}
+.lesson-file-card:hover{border-color:var(--accent);box-shadow:var(--shadow-sm);}
+.lesson-file-card i{font-size:26px;color:var(--accent);margin-bottom:8px;}
+.lesson-file-card b{display:block;font-size:13px;} .lesson-file-card span{font-size:10.5px;color:var(--text-muted);}
+
+.timetable-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
+@media(max-width:900px){.timetable-grid{grid-template-columns:1fr;}}
+.timetable-day{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px;min-height:110px;}
+.timetable-day h5{font-size:12px;font-weight:800;margin-bottom:10px;text-align:center;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.tt-lesson{background:var(--surface-soft);border-right:3px solid var(--accent);border-radius:8px;padding:7px 9px;margin-bottom:6px;cursor:pointer;font-size:10.5px;}
+.tt-lesson b{display:block;font-size:11px;} .tt-lesson span{color:var(--text-muted);}
+.tt-empty{font-size:10px;color:var(--text-muted);text-align:center;padding:10px 0;}
+
+.att-pill-row{display:flex;gap:5px;flex-wrap:wrap;}
+.att-pill{padding:6px 11px;border-radius:8px;font-size:10.5px;font-weight:700;border:1.5px solid var(--border);background:var(--surface-soft);cursor:pointer;font-family:'Cairo',sans-serif;}
+.att-pill.p-present{background:var(--success-soft);border-color:var(--success);color:var(--success);}
+.att-pill.p-absent{background:var(--danger-soft);border-color:var(--danger);color:var(--danger);}
+.att-pill.p-late{background:var(--warning-soft);border-color:var(--warning);color:#a3781f;}
+.att-pill.p-excused{background:var(--info-soft);border-color:var(--info);color:var(--info);}
+
+.drawer-overlay{position:fixed;inset:0;background:rgba(10,39,56,0.5);z-index:1900;display:none;}
+.drawer-overlay.active{display:block;}
+.drawer-panel{position:fixed;top:0;left:0;height:100%;width:520px;max-width:94vw;background:var(--surface);z-index:1950;box-shadow:var(--shadow-lg);transform:translateX(-100%);transition:.25s ease;overflow-y:auto;}
+.drawer-panel.active{transform:translateX(0);}
+.drawer-head{padding:20px 22px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;background:var(--surface);z-index:2;}
+.drawer-close{background:none;border:none;font-size:18px;color:var(--text-muted);cursor:pointer;}
+.drawer-body{padding:20px 22px;}
+
+.wide-modal{max-width:720px !important;}
+.modal-section-title{display:flex;align-items:center;gap:10px;margin:20px 0 14px;padding-bottom:10px;border-bottom:2px solid var(--surface-soft);}
+.modal-section-title:first-child{margin-top:0;}
+.modal-section-title i{width:32px;height:32px;background:var(--warning-soft);color:var(--accent);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.modal-section-title h4{font-size:14px;font-weight:800;color:var(--primary);}
+
+.subscription-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:10px;}
+.subscription-card .sub-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.subscription-card b{font-size:13.5px;}
+
+.receipt-preview{background:var(--surface);border:2px dashed var(--border-strong);border-radius:var(--radius-md);padding:24px;max-width:400px;margin:0 auto;}
+.receipt-row{display:flex;justify-content:space-between;padding:6px 0;font-size:12px;border-bottom:1px dashed var(--border);}
+
+.year-chip{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface-soft);margin:3px;}
+.year-chip.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+
+.notif-item-full{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;}
+.notif-item-full:hover{background:var(--surface-soft);}
+.notif-item-full i{width:36px;height:36px;background:var(--surface-soft);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--accent);flex-shrink:0;}
+
+.search-results-dropdown{position:absolute;top:calc(100% + 6px);right:0;left:0;background:var(--surface);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);border:1px solid var(--border);z-index:200;display:none;max-height:420px;overflow-y:auto;}
+.search-results-dropdown.active{display:block;}
+.sr-group-title{font-size:10px;font-weight:800;color:var(--text-muted);padding:6px 16px;text-transform:uppercase;}
+.sr-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;font-size:12.5px;}
+.sr-item:hover{background:var(--surface-soft);}
+.notif-dropdown{position:absolute;top:44px;left:0;width:320px;background:var(--surface);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);border:1px solid var(--border);z-index:200;display:none;max-height:400px;overflow-y:auto;}
+.notif-dropdown.active{display:block;}
+</style>
+</head>
+<body>
+
+<div class="admin-layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <div><h3 id="sidebarInstName">أكاديمية النخبة</h3><span>لوحة الإدارة</span></div>
+    </div>
+    <nav class="sidebar-menu" id="sidebarMenu">
+      <a href="#" data-view="dashboard" class="active"><i class="fa-solid fa-house"></i> لوحة التحكم</a>
+      <a href="#" data-view="requests"><i class="fa-solid fa-file-lines"></i> طلبات التسجيل</a>
+      <a href="#" data-view="levels"><i class="fa-solid fa-layer-group"></i> المستويات والأفواج</a>
+      <a href="#" data-view="schedule"><i class="fa-solid fa-calendar-week"></i> الحصص والجدول</a>
+      <a href="#" data-view="students"><i class="fa-solid fa-user-graduate"></i> ملفات التلاميذ</a>
+      <a href="#" data-view="teachers"><i class="fa-solid fa-chalkboard-user"></i> الأساتذة</a>
+      <a href="#" data-view="parents"><i class="fa-solid fa-people-roof"></i> الأولياء</a>
+      <a href="#" data-view="finance"><i class="fa-solid fa-sack-dollar"></i> الاشتراكات والمالية</a>
+      <a href="#" data-view="documents"><i class="fa-solid fa-folder-open"></i> الوثائق والأرشيف</a>
+      <a href="#" data-view="reports"><i class="fa-solid fa-chart-simple"></i> التقارير والإحصائيات</a>
+      <a href="#" data-view="notifications"><i class="fa-solid fa-bell"></i> الإشعارات</a>
+      <a href="#" data-view="logs"><i class="fa-solid fa-clock-rotate-left"></i> سجل النشاط</a>
+      <a href="#" data-view="settings"><i class="fa-solid fa-gear"></i> الإعدادات</a>
+      <a href="#" class="logout" onclick="EliteAcademy.auth.logout(); return false;"><i class="fa-solid fa-arrow-right-from-bracket"></i> تسجيل الخروج</a>
+    </nav>
+  </aside>
+
+  <div class="main-panel">
+    <div class="topbar">
+      <div class="topbar-search" style="position:relative;">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="topSearchInput" placeholder="بحث: تلميذ، بطاقة، ولي، أستاذ، فوج، مادة، طلب، وصل، وثيقة...">
+        <div class="search-results-dropdown" id="searchResultsDropdown"></div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-notif" id="notifBell" style="position:relative;">
+          <i class="fa-solid fa-bell"></i><span class="dot" id="notifDot" style="display:none;"></span>
+          <div class="notif-dropdown" id="notifDropdown"><div style="padding:14px 18px;border-bottom:1px solid var(--border);font-size:13px;font-weight:800;">الإشعارات</div><div id="notifDropdownList"></div></div>
+        </div>
+        <div class="topbar-admin"><div class="topbar-admin-avatar">AD</div><div><span>المدير</span><small id="topbarDate"></small></div></div>
+      </div>
+    </div>
+
+    <div class="dash-content" id="mainContent">
+
+      <!-- ============ DASHBOARD ============ -->
+      <div class="view-panel active" id="view-dashboard">
+        <div style="background:linear-gradient(120deg,var(--primary-dark),var(--primary));border-radius:var(--radius-lg);padding:24px;color:#fff;margin-bottom:20px;">
+          <span class="demo-tag" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;"><i class="fa-solid fa-flask"></i> بيانات تجريبية</span>
+          <h2 style="color:#fff;font-size:21px;margin-bottom:4px;">مرحبًا بك، مدير الأكاديمية 👋</h2>
+          <p style="color:rgba(255,255,255,0.75);font-size:12.5px;" id="dashDate"></p>
+        </div>
+        <div class="quick-actions-grid">
+          <div class="quick-action-btn" onclick="showView('requests')"><i class="fa-solid fa-file-circle-plus"></i><span>طلب تسجيل</span></div>
+          <div class="quick-action-btn" onclick="openStudentModal()"><i class="fa-solid fa-user-plus"></i><span>إضافة تلميذ</span></div>
+          <div class="quick-action-btn" onclick="openGroupModal()"><i class="fa-solid fa-people-group"></i><span>إنشاء فوج</span></div>
+          <div class="quick-action-btn" onclick="showView('schedule')"><i class="fa-solid fa-calendar-plus"></i><span>إضافة حصة</span></div>
+          <div class="quick-action-btn" onclick="showView('schedule')"><i class="fa-solid fa-calendar-check"></i><span>تسجيل حضور</span></div>
+          <div class="quick-action-btn" onclick="openTeacherModal()"><i class="fa-solid fa-chalkboard-user"></i><span>إضافة أستاذ</span></div>
+          <div class="quick-action-btn" onclick="openParentModal()"><i class="fa-solid fa-people-roof"></i><span>إضافة ولي</span></div>
+          <div class="quick-action-btn" onclick="openPaymentModal()"><i class="fa-solid fa-money-bill-transfer"></i><span>تسجيل دفعة</span></div>
+          <div class="quick-action-btn" onclick="openDocumentModal()"><i class="fa-solid fa-folder-plus"></i><span>إضافة وثيقة</span></div>
+          <div class="quick-action-btn" onclick="showView('reports')"><i class="fa-solid fa-chart-simple"></i><span>تقرير</span></div>
+        </div>
+        <div class="stats-cards" id="dashKpiRow" style="margin-bottom:20px;"></div>
+        <div class="section-grid">
+          <div class="panel"><div class="panel-head"><h3>حصص اليوم</h3><a href="#" onclick="showView('schedule');return false;">عرض الجدول</a></div><div id="todayScheduleList"></div></div>
+          <div class="panel"><div class="panel-head"><h3>التنبيهات</h3><a href="#" onclick="showView('notifications');return false;">عرض الكل</a></div><div id="dashAlertsList"></div></div>
+        </div>
+        <div class="section-grid">
+          <div class="panel"><div class="panel-head"><h3>آخر طلبات التسجيل</h3><a href="#" onclick="showView('requests');return false;">عرض الكل</a></div><div style="overflow-x:auto;"><table class="dtable"><thead><tr><th>رقم الطلب</th><th>التلميذ</th><th>المستوى</th><th>الحالة</th></tr></thead><tbody id="dashRequestsBody"></tbody></table></div></div>
+          <div class="panel"><div class="panel-head"><h3>الحضور اليوم</h3></div><div id="dashAttendanceSummary" style="padding:18px;"></div></div>
+        </div>
+      </div>
+
+      <!-- ============ REQUESTS ============ -->
+      <div class="view-panel" id="view-requests">
+        <div class="dash-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div><h2 style="font-size:20px;">طلبات التسجيل</h2><p style="font-size:12.5px;color:var(--text-muted);">جميع طلبات التسجيل المرسلة عبر الموقع</p></div>
+          <button class="btn btn-primary" onclick="openManualRequestModal()"><i class="fa-solid fa-plus"></i> إضافة طلب يدوي</button>
+        </div>
+        <div class="mini-stats-row" id="requestsMiniStats"></div>
+        <div class="grid-cards" id="requestsGrid"></div>
+      </div>
+
+      <!-- ============ LEVELS & GROUPS ============ -->
+      <div class="view-panel" id="view-levels">
+        <div id="levelsListSubview">
+          <div class="dash-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div><h2 style="font-size:20px;">المستويات والأفواج</h2><p style="font-size:12.5px;color:var(--text-muted);">الهيكل الدراسي الكامل للأكاديمية</p></div>
+            <button class="btn btn-primary" onclick="openLevelModal()"><i class="fa-solid fa-plus"></i> إضافة مستوى</button>
+          </div>
+          <div class="level-cards-grid" id="levelsGrid"></div>
+        </div>
+        <div id="levelWorkspaceSubview" style="display:none;"></div>
+        <div id="groupWorkspaceSubview" style="display:none;"></div>
+      </div>
+
+      <!-- ============ SCHEDULE (level -> group -> lesson files) ============ -->
+      <div class="view-panel" id="view-schedule">
+        <div id="scheduleLevelPick">
+          <div class="dash-header"><h2 style="font-size:20px;">الحصص والجدول</h2><p style="font-size:12.5px;color:var(--text-muted);">اختر المستوى ثم الفوج لعرض ملفات الحصص</p></div>
+          <div class="level-cards-grid" id="scheduleLevelsGrid"></div>
+        </div>
+        <div id="scheduleGroupPick" style="display:none;"></div>
+        <div id="scheduleLessonsList" style="display:none;"></div>
+      </div>
+
+      <!-- ============ STUDENTS ============ -->
+      <div class="view-panel" id="view-students">
+        <div class="dash-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div><h2 style="font-size:20px;">ملفات التلاميذ</h2><p style="font-size:12.5px;color:var(--text-muted);">جميع التلاميذ عبر كل المستويات والأفواج</p></div>
+          <button class="btn btn-primary" onclick="openStudentModal()"><i class="fa-solid fa-user-plus"></i> إضافة تلميذ</button>
+        </div>
+        <div class="mini-stats-row" id="studentsMiniStats"></div>
+        <div class="search-bar-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="studentsSearchBox" placeholder="بحث بالاسم، رقم البطاقة، اسم الولي..."></div>
+        <div class="grid-cards" id="studentsGrid"></div>
+      </div>
+
+      <!-- ============ STUDENT PROFILE ============ -->
+      <div class="view-panel" id="view-student-profile">
+        <a href="#" onclick="showView('students');return false;" style="display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--text-muted);margin-bottom:14px;font-weight:700;"><i class="fa-solid fa-arrow-right"></i> العودة لملفات التلاميذ</a>
+        <div class="profile-header-card" id="studentProfileHeader"></div>
+        <div class="quick-info-bar" id="studentQuickInfo"></div>
+        <div class="profile-tabs" id="studentProfileTabs"></div>
+        <div id="studentProfileTabContent"></div>
+      </div>
+
+      <!-- ============ TEACHERS ============ -->
+      <div class="view-panel" id="view-teachers">
+        <div class="dash-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div><h2 style="font-size:20px;">الأساتذة</h2><p style="font-size:12.5px;color:var(--text-muted);">سجلات إدارية داخلية — لا حسابات دخول</p></div>
+          <button class="btn btn-primary" onclick="openTeacherModal()"><i class="fa-solid fa-user-plus"></i> إضافة أستاذ</button>
+        </div>
+        <div class="search-bar-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="teachersSearchBox" placeholder="بحث بالاسم أو التخصص..."></div>
+        <div class="grid-cards" id="teachersGrid"></div>
+      </div>
+
+      <!-- ============ TEACHER PROFILE ============ -->
+      <div class="view-panel" id="view-teacher-profile">
+        <a href="#" onclick="showView('teachers');return false;" style="display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--text-muted);margin-bottom:14px;font-weight:700;"><i class="fa-solid fa-arrow-right"></i> العودة للأساتذة</a>
+        <div id="teacherProfileContent"></div>
+      </div>
+
+      <!-- ============ PARENTS ============ -->
+      <div class="view-panel" id="view-parents">
+        <div class="dash-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div><h2 style="font-size:20px;">الأولياء</h2><p style="font-size:12.5px;color:var(--text-muted);">قد يكون للولي أكثر من تلميذ</p></div>
+          <button class="btn btn-primary" onclick="openParentModal()"><i class="fa-solid fa-user-plus"></i> إضافة ولي</button>
+        </div>
+        <div class="search-bar-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="parentsSearchBox" placeholder="بحث بالاسم أو الهاتف أو اسم الابن..."></div>
+        <div class="grid-cards" id="parentsGrid"></div>
+      </div>
+
+      <!-- ============ FINANCE ============ -->
+      <div class="view-panel" id="view-finance">
+        <div class="dash-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div><h2 style="font-size:20px;">الاشتراكات والمالية</h2><p style="font-size:12.5px;color:var(--text-muted);">اشتراكات المواد، المدفوعات، المصاريف، الرواتب</p></div>
+          <div style="display:flex;gap:8px;"><button class="btn btn-outline btn-sm" onclick="openExpenseModal()">إضافة مصروف</button><button class="btn btn-primary" onclick="openPaymentModal()">تسجيل دفعة</button></div>
+        </div>
+        <div class="stats-cards" id="financeKpiRow" style="margin-bottom:18px;"></div>
+        <div class="panel"><div class="panel-head"><h3>آخر المدفوعات</h3></div><div style="overflow-x:auto;"><table class="dtable"><thead><tr><th>الوصل</th><th>التلميذ</th><th>المادة</th><th>المبلغ</th><th>التاريخ</th><th></th></tr></thead><tbody id="paymentsTableBody"></tbody></table></div></div>
+      </div>
+
+      <!-- ============ DOCUMENTS & ARCHIVE ============ -->
+      <div class="view-panel" id="view-documents">
+        <div class="dash-header" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div><h2 style="font-size:20px;">الوثائق والأرشيف</h2><p style="font-size:12.5px;color:var(--text-muted);">مركز موحد للوثائق والسجلات المؤرشفة</p></div>
+          <button class="btn btn-primary" onclick="openDocumentModal()"><i class="fa-solid fa-folder-plus"></i> إضافة وثيقة</button>
+        </div>
+        <div class="view-toggle" style="display:flex;gap:4px;background:var(--surface-soft);border-radius:9px;padding:4px;width:fit-content;margin-bottom:16px;">
+          <button id="docsTabBtn" class="active" onclick="switchDocsArchiveTab('docs')" style="padding:8px 16px;border-radius:7px;border:none;background:var(--surface);font-weight:700;font-size:12.5px;">الوثائق</button>
+          <button id="archiveTabBtn" onclick="switchDocsArchiveTab('archive')" style="padding:8px 16px;border-radius:7px;border:none;background:none;font-size:12.5px;color:var(--text-muted);">الأرشيف</button>
+        </div>
+        <div id="docsSubview"><div class="search-bar-wrap"><i class="fa-solid fa-magnifying-glass"></i><input type="text" id="documentsSearchBox" placeholder="بحث بالعنوان أو رقم الوثيقة..."></div><div class="grid-cards" id="documentsGrid"></div></div>
+        <div id="archiveSubview" style="display:none;"><div class="mini-stats-row" id="archiveMiniStats"></div><div class="grid-cards" id="archiveGrid"></div></div>
+      </div>
+
+      <!-- ============ REPORTS ============ -->
+      <div class="view-panel" id="view-reports">
+        <div class="dash-header"><h2 style="font-size:20px;">التقارير والإحصائيات</h2><p style="font-size:12.5px;color:var(--text-muted);">محسوبة من البيانات الفعلية</p></div>
+        <div class="quick-actions-grid" style="grid-template-columns:repeat(4,1fr);">
+          <div class="quick-action-btn" onclick="generateReport('students')"><i class="fa-solid fa-user-graduate"></i><span>التلاميذ</span></div>
+          <div class="quick-action-btn" onclick="generateReport('attendance')"><i class="fa-solid fa-calendar-check"></i><span>الحضور</span></div>
+          <div class="quick-action-btn" onclick="generateReport('finance')"><i class="fa-solid fa-sack-dollar"></i><span>المالية</span></div>
+          <div class="quick-action-btn" onclick="generateReport('requests')"><i class="fa-solid fa-file-lines"></i><span>التسجيلات</span></div>
+        </div>
+        <div class="panel" id="reportPreviewPanel" style="padding:24px;"><div class="empty-state"><i class="fa-solid fa-chart-simple"></i><p>اختر تقريرًا لعرضه</p></div></div>
+      </div>
+
+      <!-- ============ NOTIFICATIONS (dedicated view) ============ -->
+      <div class="view-panel" id="view-notifications">
+        <div class="dash-header"><h2 style="font-size:20px;">الإشعارات</h2><p style="font-size:12.5px;color:var(--text-muted);">تنبيهات داخلية فقط، وليست نظام مراسلة</p></div>
+        <div class="panel" id="notifFullList"></div>
+      </div>
+
+      <!-- ============ LOGS ============ -->
+      <div class="view-panel" id="view-logs">
+        <div class="dash-header"><h2 style="font-size:20px;">سجل النشاط</h2></div>
+        <div class="mini-stats-row" id="logsMiniStats"></div>
+        <div class="panel"><div style="overflow-x:auto;"><table class="dtable"><thead><tr><th>الوصف</th><th>التاريخ</th><th>الساعة</th></tr></thead><tbody id="logsTableBody"></tbody></table></div></div>
+      </div>
+
+      <!-- ============ SETTINGS ============ -->
+      <div class="view-panel" id="view-settings">
+        <div class="dash-header"><h2 style="font-size:20px;">الإعدادات</h2></div>
+        <div class="panel" style="padding:24px;max-width:820px;margin-bottom:18px;">
+          <h3 style="font-size:14px;margin-bottom:14px;">معلومات المؤسسة والاشتراكات</h3>
+          <form id="settingsForm">
+            <div class="form-grid">
+              <div class="form-field"><label>اسم المؤسسة</label><input type="text" name="institutionName"></div>
+              <div class="form-field"><label>الشعار</label><input type="text" name="slogan"></div>
+              <div class="form-field full"><label>العنوان</label><input type="text" name="address"></div>
+              <div class="form-field"><label>الهاتف</label><input type="text" name="phone" class="ltr"></div>
+              <div class="form-field"><label>البريد الإلكتروني</label><input type="email" name="email" class="ltr"></div>
+              <div class="form-field"><label>ساعات العمل</label><input type="text" name="workingHours"></div>
+              <div class="form-field"><label>الاشتراك الشهري الافتراضي للمادة (دج)</label><input type="number" name="monthlyFee"></div>
+              <div class="form-field"><label>رسوم التسجيل (دج)</label><input type="number" name="registrationFee"></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:14px;margin-top:18px;">
+              <button type="submit" class="btn btn-primary">حفظ</button>
+              <span id="settingsSavedMsg" style="display:none;color:var(--success);font-weight:700;font-size:12.5px;">تم الحفظ بنجاح</span>
+            </div>
+          </form>
+        </div>
+        <div class="panel" style="padding:24px;max-width:820px;">
+          <h3 style="font-size:14px;margin-bottom:14px;">السنة الدراسية</h3>
+          <div id="yearsListSettings"></div>
+          <div style="display:flex;gap:8px;margin-top:12px;"><input type="text" id="newYearInput" placeholder="2028/2029" style="flex:1;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;"><button class="btn btn-sm btn-dark" onclick="addYear()">إضافة</button></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer-panel" id="drawerPanel"><div class="drawer-head"><h3 id="drawerTitle">التفاصيل</h3><button class="drawer-close" onclick="closeDrawer()"><i class="fa-solid fa-xmark"></i></button></div><div class="drawer-body" id="drawerBody"></div></div>
+
+<!-- Firebase (optional realtime sync layer — must load BEFORE shared.js) -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="shared.js"></script>
+<script>
+/* =========================================================================
+   ELITE ACADEMY — SUBJECT-BASED SPA DASHBOARD
+   -------------------------------------------------------------------------
+   Backbone chain implemented end-to-end:
+   طلب → قبول → مستوى → مادة → فوج → ملف تلميذ (بطاقة 8 أرقام) → اشتراك
+   → إدراج في الفوج → حصص الفوج → حضور/غياب → ملف التلميذ → فاتورة → تقارير
+   Adds K.subscriptions on top of shared.js's generic storage functions.
+   Simplification note: "staff" module is intentionally NOT in the sidebar
+   per this prompt's 13-item menu, though its data collection still exists
+   in shared.js for backward compatibility (unused here).
+   ========================================================================= */
+EliteAcademy.auth.requireAuth();
+const K = EliteAcademy.storage.keys;
+K.groups = 'eliteAcademy_groups';
+K.lessons = 'eliteAcademy_lessons';
+K.subscriptions = 'eliteAcademy_subscriptions';
+const getData = EliteAcademy.storage.getData;
+const showSuccess = EliteAcademy.notifications.showSuccess, showError = EliteAcademy.notifications.showError, showWarning = EliteAcademy.notifications.showWarning;
+
+function showView(name){
+  document.querySelectorAll('.view-panel').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('.sidebar-menu a[data-view]').forEach(a=>a.classList.toggle('active',a.dataset.view===name));
+  const r = {dashboard:renderDashboard,requests:renderRequestsView,levels:renderLevelsList,schedule:renderScheduleLevelsPick,students:renderStudentsView,teachers:renderTeachersView,parents:renderParentsView,finance:renderFinanceView,documents:renderDocumentsArchiveView,reports:()=>{},notifications:renderNotificationsView,logs:renderLogsView,settings:renderSettingsView};
+  if(r[name]) r[name]();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.sidebar-menu a[data-view]').forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showView(a.dataset.view);}));
+function initials(f,l){ return ((f||'')[0]||'')+((l||'')[0]||''); }
+function emptyStateHtml(icon,text){ return `<div class="empty-state" style="grid-column:1/-1;"><i class="fa-solid ${icon}"></i><p>${text}</p></div>`; }
+const STAGE_ICON = {'تحضيري':'fa-child-reaching','ابتدائي':'fa-book-open','متوسط':'fa-book','ثانوي':'fa-graduation-cap'};
+
+/* ============ SEED: give levels a subjects[] list + groups per subject + demo subscriptions ============ */
+function seedSubjectModel(){
+  if(localStorage.getItem('eliteAcademy_subjectModelSeeded')) return;
+  const levels = getData(K.levels);
+  const subjectPool = ['الرياضيات','اللغة العربية','اللغة الفرنسية','اللغة الإنجليزية','العلوم الطبيعية','الفيزياء','التاريخ والجغرافيا'];
+  const updatedLevels = levels.map(l => ({...l, subjects: l.subjects || subjectPool.slice(0, l.stage==='تحضيري'?2:6)}));
+  EliteAcademy.storage.setData(K.levels, updatedLevels);
+
+  const teachers = getData(K.teachers);
+  const years = getData(K.academicYears);
+  const currentYear = years.find(y=>y.isCurrent) || years[0];
+  const students = getData(K.students);
+
+  // Build one group per (level, subject) for the flagship level "الرابعة متوسط" plus keep others light.
+  const flagshipLevel = updatedLevels.find(l=>l.name==='الرابعة متوسط') || updatedLevels[0];
+  const groups = [];
+  (flagshipLevel.subjects||[]).forEach((subject,i) => {
+    const teacher = teachers.find(t=>t.subject===subject) || teachers[i % teachers.length];
+    for(let gi=1; gi<=2; gi++){
+      groups.push({
+        id: EliteAcademy.storage.generateId('grp'), groupName:`فوج ${gi}`, levelId: flagshipLevel.id, subject,
+        teacherId: teacher?teacher.id:'', room:`قاعة ${(i+gi)%10+1}`, capacity:15, academicYearId: currentYear?currentYear.id:'',
+        status:'نشط', isDemo:true, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString()
+      });
+    }
+  });
+  // Light single group for every other level (kept simple so the whole tree is browsable)
+  updatedLevels.filter(l=>l.id!==flagshipLevel.id).forEach(l => {
+    (l.subjects||[]).slice(0,2).forEach((subject,i)=>{
+      const teacher = teachers[i % teachers.length];
+      groups.push({ id:EliteAcademy.storage.generateId('grp'), groupName:'فوج 1', levelId:l.id, subject, teacherId:teacher?teacher.id:'', room:`قاعة ${i+1}`, capacity:20, academicYearId: currentYear?currentYear.id:'', status:'نشط', isDemo:true, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() });
+    });
+  });
+  EliteAcademy.storage.setData(K.groups, groups);
+
+  // Demo lessons for the flagship groups
+  const dayList = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس'];
+  const flagshipGroups = groups.filter(g=>g.levelId===flagshipLevel.id);
+  const lessons = flagshipGroups.map((g,i) => ({
+    id:EliteAcademy.storage.generateId('les'), groupId:g.id, teacherId:g.teacherId, day:dayList[i%dayList.length],
+    startTime:`0${8+(i%3)}:00`, endTime:`0${9+(i%3)}:00`, room:g.room, academicYearId:g.academicYearId, isDemo:true
+  }));
+  EliteAcademy.storage.setData(K.lessons, lessons);
+
+  // Subscribe existing demo students (matching flagship level) into 1-2 subject groups + create subscription records
+  const settings = EliteAcademy.utils.getSettings();
+  const subscriptions = [];
+  students.filter(s=>s.level===flagshipLevel.name).forEach((s,idx) => {
+    const chosenGroups = flagshipGroups.slice(idx%2, idx%2+2);
+    chosenGroups.forEach(g => {
+      subscriptions.push({ id:EliteAcademy.storage.generateId('sub'), studentId:s.id, groupId:g.id, subject:g.subject, teacherId:g.teacherId, monthlyFee:Number(settings.monthlyFee||1500), startDate:s.registeredAt||'2025-09-01', status:'نشط', isDemo:true });
+    });
+  });
+  EliteAcademy.storage.setData(K.subscriptions, subscriptions);
+  localStorage.setItem('eliteAcademy_subjectModelSeeded','true');
+}
+seedSubjectModel();
+
+function studentsInGroup(groupId){
+  const subIds = getData(K.subscriptions).filter(su=>su.groupId===groupId).map(su=>su.studentId);
+  return getData(K.students).filter(s=>subIds.includes(s.id) && s.status!=='مؤرشف');
+}
+function subscriptionsOfStudent(studentId){ return getData(K.subscriptions).filter(su=>su.studentId===studentId && su.status!=='ملغى'); }
+function groupsOfLevel(levelId){ return getData(K.groups).filter(g=>g.levelId===levelId && g.status!=='مؤرشف'); }
+
+/* ============ DRAWER ============ */
+function openDrawer(title, html){ document.getElementById('drawerTitle').textContent=title; document.getElementById('drawerBody').innerHTML=html; document.getElementById('drawerOverlay').classList.add('active'); document.getElementById('drawerPanel').classList.add('active'); }
+function closeDrawer(){ document.getElementById('drawerOverlay').classList.remove('active'); document.getElementById('drawerPanel').classList.remove('active'); }
+
+/* =========================================================================
+   DASHBOARD
+   ========================================================================= */
+function renderDashboard(){
+  const settings = EliteAcademy.utils.getSettings();
+  document.getElementById('sidebarInstName').textContent = (settings.institutionName||'أكاديمية النخبة').split(' ').slice(0,2).join(' ');
+  const now = new Date();
+  document.getElementById('dashDate').textContent = now.toLocaleDateString('ar-DZ',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('topbarDate').textContent = now.toLocaleDateString('ar-DZ',{month:'short',day:'numeric'});
+
+  const students = getData(K.students).filter(s=>s.status!=='مؤرشف');
+  const levels = getData(K.levels).filter(l=>l.status!=='مؤرشف');
+  const classes = getData(K.classes);
+  const groups = getData(K.groups).filter(g=>g.status!=='مؤرشف');
+  const teachers = getData(K.teachers);
+  const requests = getData(K.requests);
+  const attendance = getData(K.attendance);
+  const payments = getData(K.payments).filter(p=>p.status!=='ملغى');
+  const today = new Date().toISOString().split('T')[0];
+  const dayNames=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const lessonsToday = getData(K.lessons).filter(l=>l.day===dayNames[now.getDay()]);
+  const absentToday = attendance.filter(a=>a.date===today&&a.status==='غائب').length;
+  const totalCollected = payments.reduce((s,p)=>s+Number(p.amount||0),0);
+  const subscriptions = getData(K.subscriptions).filter(su=>su.status!=='ملغى');
+  const totalExpected = subscriptions.reduce((s,su)=>s+Number(su.monthlyFee||0),0);
+  const remaining = Math.max(totalExpected-totalCollected,0);
+
+  const kpis = [
+    {icon:'fa-user-graduate',color:'blue',num:students.length,label:'عدد التلاميذ'},
+    {icon:'fa-user-check',color:'green',num:students.filter(s=>s.status==='نشط').length,label:'التلاميذ النشطون'},
+    {icon:'fa-layer-group',color:'blue',num:levels.length,label:'عدد المستويات'},
+    {icon:'fa-door-open',color:'blue',num:classes.length,label:'عدد الأقسام'},
+    {icon:'fa-people-group',color:'blue',num:groups.length,label:'عدد الأفواج'},
+    {icon:'fa-chalkboard-user',color:'blue',num:teachers.length,label:'عدد الأساتذة'},
+    {icon:'fa-file-circle-plus',color:'gold',num:requests.filter(r=>r.status==='جديد').length,label:'طلبات تسجيل جديدة'},
+    {icon:'fa-calendar-xmark',color:'red',num:absentToday,label:'الغائبون اليوم'},
+    {icon:'fa-calendar-day',color:'blue',num:lessonsToday.length,label:'الحصص اليوم'},
+    {icon:'fa-sack-dollar',color:'green',num:EliteAcademy.utils.formatCurrency(totalCollected),label:'المبالغ المحصلة'},
+    {icon:'fa-circle-exclamation',color:'red',num:EliteAcademy.utils.formatCurrency(remaining),label:'المبالغ المستحقة'}
+  ];
+  document.getElementById('dashKpiRow').innerHTML = kpis.map(k=>`<div class="dstat-card"><div class="dstat-icon ${k.color}"><i class="fa-solid ${k.icon}"></i></div><div><div class="dstat-num" style="font-size:15px;">${k.num}</div><div class="dstat-label">${k.label}</div></div></div>`).join('');
+
+  document.getElementById('todayScheduleList').innerHTML = lessonsToday.length ? lessonsToday.sort((a,b)=>a.startTime.localeCompare(b.startTime)).map(l=>{
+    const g=EliteAcademy.storage.findById(K.groups,l.groupId), t=EliteAcademy.storage.findById(K.teachers,l.teacherId);
+    return `<div class="lesson-row"><div class="lesson-time">${l.startTime}</div><div class="lesson-info"><b>${g?g.subject:''}</b><span>${g?g.groupName:''} ${t?'— '+t.firstname+' '+t.lastname:''}</span></div><div class="btns"><button class="btn btn-sm btn-dark" onclick="openLessonFile('${l.id}')">فتح الحصة</button></div></div>`;
+  }).join('') : emptyStateHtml('fa-calendar','لا توجد حصص مجدولة اليوم');
+
+  const alerts = [
+    {t:`${requests.filter(r=>r.status==='جديد').length} طلبات تسجيل جديدة`,show:requests.filter(r=>r.status==='جديد').length>0,view:'requests'},
+    {t:`${absentToday} غياب مسجل اليوم`,show:absentToday>0,view:'schedule'},
+    {t:`${EliteAcademy.utils.formatCurrency(remaining)} اشتراكات غير مدفوعة`,show:remaining>0,view:'finance'}
+  ].filter(a=>a.show);
+  document.getElementById('dashAlertsList').innerHTML = alerts.length ? alerts.map(a=>`<div class="notif-item" style="cursor:pointer;" onclick="showView('${a.view}')"><i class="fa-solid fa-bell"></i><div><p>${a.t}</p></div></div>`).join('') : emptyStateHtml('fa-circle-check','لا توجد تنبيهات');
+
+  document.getElementById('dashRequestsBody').innerHTML = requests.slice(0,5).map(r=>`<tr onclick="showView('requests')" style="cursor:pointer;"><td class="ltr">${r.regNumber}</td><td>${r.student.firstname} ${r.student.lastname}</td><td>${r.student.level}</td><td><span class="badge ${EliteAcademy.utils.statusBadgeClass(r.status)}">${r.status}</span></td></tr>`).join('') || `<tr><td colspan="4">${emptyStateHtml('fa-inbox','لا توجد طلبات')}</td></tr>`;
+
+  const todayAtt = attendance.filter(a=>a.date===today);
+  const present = todayAtt.filter(a=>a.status==='حاضر').length;
+  document.getElementById('dashAttendanceSummary').innerHTML = `<div class="mini-stats-row" style="grid-template-columns:1fr 1fr;margin-bottom:0;"><div class="mini-stat"><b style="color:var(--success);">${present}</b><span>حاضر</span></div><div class="mini-stat"><b style="color:var(--danger);">${absentToday}</b><span>غائب</span></div></div>`;
+
+  renderNotifDropdown();
+}
+function renderNotifDropdown(){
+  const items = buildNotificationItems();
+  document.getElementById('notifDot').style.display = items.length?'block':'none';
+  document.getElementById('notifDropdownList').innerHTML = items.length ? items.slice(0,6).map(n=>`<div class="notif-item" style="cursor:pointer;" onclick="showView('${n.view}')"><i class="fa-solid ${n.icon}"></i><div><p>${n.text}</p></div></div>`).join('') : emptyStateHtml('fa-bell-slash','لا توجد إشعارات جديدة');
+}
+function buildNotificationItems(){
+  const requests = getData(K.requests).filter(r=>r.status==='جديد');
+  const today = new Date().toISOString().split('T')[0];
+  const attendance = getData(K.attendance);
+  const settings = EliteAcademy.utils.getSettings();
+  const subscriptions = getData(K.subscriptions).filter(su=>su.status!=='ملغى');
+  const payments = getData(K.payments).filter(p=>p.status!=='ملغى');
+  const unpaidCount = subscriptions.filter(su => !payments.some(p=>p.studentId===su.studentId && (p.subject===su.subject))).length;
+  const items = [];
+  requests.forEach(r=>items.push({icon:'fa-file-lines',text:`طلب تسجيل جديد: ${r.student.firstname} ${r.student.lastname}`,view:'requests'}));
+  const absentToday = attendance.filter(a=>a.status==='غائب'&&a.date===today).length;
+  if(absentToday) items.push({icon:'fa-calendar-xmark',text:`${absentToday} تلاميذ غائبون اليوم`,view:'schedule'});
+  if(unpaidCount) items.push({icon:'fa-sack-dollar',text:`${unpaidCount} اشتراكاً بحاجة للدفع`,view:'finance'});
+  const lessonsToday = getData(K.lessons).filter(l=>{const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];return l.day===days[new Date().getDay()];});
+  if(lessonsToday.length) items.push({icon:'fa-calendar-day',text:`لديك ${lessonsToday.length} حصص اليوم`,view:'schedule'});
+  return items;
+}
+function renderNotificationsView(){
+  const items = buildNotificationItems();
+  document.getElementById('notifFullList').innerHTML = items.length ? items.map(n=>`<div class="notif-item-full" onclick="showView('${n.view}')"><i class="fa-solid ${n.icon}"></i><div><p style="font-size:13px;font-weight:700;">${n.text}</p></div></div>`).join('') : emptyStateHtml('fa-bell-slash','لا توجد إشعارات حاليًا');
+}
+document.getElementById('notifBell').addEventListener('click',e=>{document.getElementById('notifDropdown').classList.toggle('active');e.stopPropagation();});
+document.addEventListener('click',()=>document.getElementById('notifDropdown').classList.remove('active'));
+
+/* ============ GLOBAL SEARCH ============ */
+const searchInput=document.getElementById('topSearchInput'), searchDropdown=document.getElementById('searchResultsDropdown');
+searchInput.addEventListener('input',function(){
+  const q=this.value.trim(); if(!q){searchDropdown.classList.remove('active');return;}
+  const r = EliteAcademy.search.globalSearch(q);
+  const groupMatches = getData(K.groups).filter(g=>g.groupName.includes(q)||g.subject.includes(q));
+  const paymentMatches = getData(K.payments).filter(p=>p.receiptNumber&&p.receiptNumber.toLowerCase().includes(q.toLowerCase()));
+  let html='',total=0;
+  const add=(label,items,icon,render,onClick)=>{ if(!items.length)return; total+=items.length; html+=`<div class="sr-group-title">${label}</div>`+items.slice(0,4).map(it=>`<div class="sr-item" onclick='${onClick(it)}'><i class="fa-solid ${icon}"></i><span>${render(it)}</span></div>`).join(''); };
+  add('التلاميذ',r.students,'fa-user-graduate',s=>`${s.firstname} ${s.lastname} — ${s.cardNumber}`,s=>`openStudentProfile('${s.id}')`);
+  add('طلبات التسجيل',r.requests,'fa-file-lines',x=>`${x.regNumber} — ${x.student.firstname}`,()=>`showView('requests')`);
+  add('الأولياء',r.parents,'fa-people-roof',p=>`${p.firstname} ${p.lastname}`,()=>`showView('parents')`);
+  add('الأساتذة',r.teachers,'fa-chalkboard-user',t=>`${t.firstname} ${t.lastname}`,t=>`openTeacherProfile('${t.id}')`);
+  add('الأفواج',groupMatches,'fa-people-group',g=>`${g.groupName} — ${g.subject}`,g=>`openGroupWorkspace('${g.id}')`);
+  add('الإيصالات',paymentMatches,'fa-receipt',p=>p.receiptNumber,()=>`showView('finance')`);
+  searchDropdown.innerHTML = total?html:`<div style="padding:18px;text-align:center;color:var(--text-muted);font-size:12.5px;">لا نتائج</div>`;
+  searchDropdown.classList.add('active');
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.topbar-search'))searchDropdown.classList.remove('active');});
+
+/* =========================================================================
+   REQUESTS + ACCEPT → LEVEL → SUBJECT → GROUP FLOW
+   ========================================================================= */
+function renderRequestsView(){
+  const requests = getData(K.requests);
+  const counts={}; ['جديد','قيد الدراسة','مقبول','مرفوض','مكتمل التسجيل'].forEach(s=>counts[s]=requests.filter(r=>r.status===s).length);
+  document.getElementById('requestsMiniStats').innerHTML = [{v:requests.length,l:'الإجمالي'},{v:counts['جديد'],l:'جديد'},{v:counts['قيد الدراسة'],l:'قيد الدراسة'},{v:counts['مقبول'],l:'مقبول'},{v:counts['مرفوض'],l:'مرفوض'},{v:counts['مكتمل التسجيل'],l:'مكتمل'}].map(s=>`<div class="mini-stat"><b>${s.v}</b><span>${s.l}</span></div>`).join('');
+  document.getElementById('requestsGrid').innerHTML = requests.length ? requests.map(r=>`
+    <div class="mini-card" onclick="openRequestDetail('${r.id}')">
+      <div class="mc-top"><div class="mc-avatar">${initials(r.student.firstname,r.student.lastname)}</div><div><div class="mc-name">${r.student.firstname} ${r.student.lastname}</div><div class="mc-sub ltr">${r.regNumber}</div></div></div>
+      <div class="mc-row"><span>المستوى</span><b>${r.student.level}</b></div>
+      <div class="mc-row"><span>الولي</span><b>${r.parent.firstname} ${r.parent.lastname}</b></div>
+      <div class="mc-row"><span>الحالة</span><span class="badge ${EliteAcademy.utils.statusBadgeClass(r.status)}">${r.status}</span></div>
+    </div>`).join('') : emptyStateHtml('fa-inbox','لا توجد طلبات');
+}
+function openRequestDetail(id){
+  const r = EliteAcademy.storage.findById(K.requests,id);
+  const html = `
+    <div class="info-grid-2" style="margin-bottom:18px;">
+      <div class="info-item"><span>الاسم</span><b>${r.student.firstname} ${r.student.lastname}</b></div>
+      <div class="info-item"><span>بالفرنسية</span><b class="ltr">${r.student.fullFr||'—'}</b></div>
+      <div class="info-item"><span>تاريخ الميلاد</span><b>${r.student.dob||'—'}</b></div>
+      <div class="info-item"><span>مكان الميلاد</span><b>${r.student.pob||'—'}</b></div>
+      <div class="info-item"><span>الجنس</span><b>${r.student.gender||'—'}</b></div>
+      <div class="info-item"><span>المستوى المطلوب</span><b>${r.student.level}</b></div>
+      <div class="info-item"><span>اسم الولي</span><b>${r.parent.firstname} ${r.parent.lastname}</b></div>
+      <div class="info-item"><span>الهاتف</span><b class="ltr">${r.parent.phone}</b></div>
+      <div class="info-item" style="grid-column:1/-1;"><span>ملاحظات</span><b>${r.student.notes||'—'}</b></div>
+      <div class="info-item"><span>تاريخ التقديم</span><b>${EliteAcademy.utils.formatDate(r.createdAt)}</b></div>
+      <div class="info-item"><span>الحالة</span><b><span class="badge ${EliteAcademy.utils.statusBadgeClass(r.status)}">${r.status}</span></b></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      ${r.status!=='مقبول'&&r.status!=='مرفوض'&&r.status!=='مكتمل التسجيل'?`<button class="btn btn-success btn-sm" onclick="acceptRequestFlow('${r.id}')"><i class="fa-solid fa-check"></i> قبول الطلب</button><button class="btn btn-danger btn-sm" onclick="rejectRequest('${r.id}')">رفض الطلب</button>`:''}
+      ${r.status==='مكتمل التسجيل'?`<button class="btn btn-outline btn-sm" onclick="closeDrawer();openStudentProfile('${r.convertedStudentId}')">عرض ملف التلميذ</button>`:''}
+    </div>`;
+  openDrawer(`تفاصيل الطلب — ${r.regNumber}`, html);
+}
+function rejectRequest(id){ EliteAcademy.modal.confirmAction('هل تريد رفض هذا الطلب؟', ()=>{ EliteAcademy.storage.updateRecord(K.requests,id,{status:'مرفوض'}); EliteAcademy.utils.logAction('update','requests',id,'تم رفض طلب التسجيل','danger'); showWarning('تم الرفض'); closeDrawer(); renderRequestsView(); }, {title:'تأكيد الرفض'}); }
+
+/* ---- The critical acceptance flow: level -> subjects -> group per subject ---- */
+let acceptFlowRequestId = null, acceptFlowSelectedGroups = {};
+function acceptRequestFlow(requestId){
+  acceptFlowRequestId = requestId;
+  acceptFlowSelectedGroups = {};
+  const r = EliteAcademy.storage.findById(K.requests, requestId);
+  const level = getData(K.levels).find(l=>l.name===r.student.level) || getData(K.levels)[0];
+  const subjects = level.subjects || [];
+  const html = `
+    <h3 style="margin-bottom:6px;">تحديد مكان التلميذ داخل المؤسسة</h3>
+    <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">المستوى: <b>${level.name}</b> — اختر المواد والفوج المناسب لكل مادة</p>
+    <div id="acceptSubjectsList">${subjects.map(subj=>{
+      const groups = getData(K.groups).filter(g=>g.levelId===level.id && g.subject===subj && g.status!=='مؤرشف');
+      return `<div class="subscription-card">
+        <div class="sub-head"><label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;"><input type="checkbox" class="accept-subject-check" data-subject="${subj}" onchange="toggleAcceptSubject('${subj}',this.checked)"> ${subj}</label></div>
+        <select id="acceptGroupSelect-${subj.replace(/\s/g,'_')}" disabled style="width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:8px;" onchange="acceptFlowSelectedGroups['${subj}']=this.value">
+          ${groups.map(g=>`<option value="${g.id}">${g.groupName} — ${g.room} (${studentsInGroup(g.id).length}/${g.capacity})</option>`).join('') || '<option value="">لا توجد أفواج لهذه المادة</option>'}
+        </select>
+      </div>`;
+    }).join('')}</div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="finalizeAcceptance('${level.id}')"><i class="fa-solid fa-user-check"></i> تأكيد وإنشاء ملف التلميذ</button>`;
+  closeDrawer();
+  EliteAcademy.modal.openModal(html, {maxWidth:'560px'});
+}
+function toggleAcceptSubject(subject, checked){
+  const select = document.getElementById('acceptGroupSelect-'+subject.replace(/\s/g,'_'));
+  select.disabled = !checked;
+  if(checked) acceptFlowSelectedGroups[subject] = select.value;
+  else delete acceptFlowSelectedGroups[subject];
+}
+function finalizeAcceptance(levelId){
+  const subjectEntries = Object.entries(acceptFlowSelectedGroups).filter(([,gid])=>gid);
+  if(subjectEntries.length===0){ showWarning('يرجى اختيار مادة واحدة على الأقل مع فوجها'); return; }
+
+  const r = EliteAcademy.storage.findById(K.requests, acceptFlowRequestId);
+  const firstGroup = EliteAcademy.storage.findById(K.groups, subjectEntries[0][1]);
+  const student = EliteAcademy.requests.convertRequestToStudent(acceptFlowRequestId, { level:r.student.level, levelId, section:firstGroup.groupName, academicYearId:firstGroup.academicYearId });
+
+  const settings = EliteAcademy.utils.getSettings();
+  subjectEntries.forEach(([subject,groupId])=>{
+    const group = EliteAcademy.storage.findById(K.groups, groupId);
+    const sub = EliteAcademy.storage.saveRecord(K.subscriptions, { studentId:student.id, groupId, subject, teacherId:group.teacherId, monthlyFee:Number(settings.monthlyFee||1500), startDate:new Date().toISOString().split('T')[0], status:'نشط', isDemo:false });
+    EliteAcademy.utils.logAction('create','subscriptions',sub.id,`تم ربط التلميذ ${student.firstname} ${student.lastname} بمادة ${subject} — ${group.groupName}`,'success');
+  });
+
+  EliteAcademy.modal.closeModal();
+  showSuccess(`تم إنشاء ملف التلميذ بنجاح — رقم البطاقة: ${student.cardNumber}`);
+  renderRequestsView(); renderDashboard();
+  openStudentProfile(student.id);
+}
+function openManualRequestModal(){
+  const levels = getData(K.levels);
+  const html = `<h3 style="margin-bottom:14px;">إضافة طلب تسجيل يدوي</h3>
+  <form id="manualReqForm"><div class="form-grid">
+    <div class="form-field" data-field="st_firstname"><label>اسم التلميذ *</label><input type="text" name="st_firstname"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="st_lastname"><label>اللقب *</label><input type="text" name="st_lastname"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="st_level"><label>المستوى *</label><select name="st_level">${levels.map(l=>`<option>${l.name}</option>`).join('')}</select><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="pa_firstname"><label>اسم الولي *</label><input type="text" name="pa_firstname"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="pa_lastname"><label>لقب الولي *</label><input type="text" name="pa_lastname"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="pa_phone"><label>الهاتف *</label><input type="tel" name="pa_phone" class="ltr"><span class="error-text">مطلوب</span></div>
+  </div><button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;">حفظ</button></form>`;
+  EliteAcademy.modal.openModal(html,{maxWidth:'560px'});
+  document.getElementById('manualReqForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    this.querySelectorAll('.form-field[data-field]').forEach(f=>f.classList.remove('has-error'));
+    let valid=true; ['st_firstname','st_lastname','st_level','pa_firstname','pa_lastname','pa_phone'].forEach(n=>{if(!this[n].value){this[n].closest('.form-field').classList.add('has-error');valid=false;}});
+    if(!valid)return;
+    const data = EliteAcademy.utils.serializeForm(this);
+    const r = EliteAcademy.requests.createRegistrationRequest({student:{firstname:data.st_firstname,lastname:data.st_lastname,level:data.st_level},parent:{firstname:data.pa_firstname,lastname:data.pa_lastname,phone:data.pa_phone}});
+    showSuccess(`تم إنشاء الطلب — ${r.regNumber}`); EliteAcademy.modal.closeModal(); renderRequestsView(); renderDashboard();
+  });
+}
+
+/* =========================================================================
+   LEVELS → SUBJECTS → GROUPS
+   ========================================================================= */
+function renderLevelsList(){
+  document.getElementById('levelsListSubview').style.display='block';
+  document.getElementById('levelWorkspaceSubview').style.display='none';
+  document.getElementById('groupWorkspaceSubview').style.display='none';
+  const levels = getData(K.levels).filter(l=>l.status!=='مؤرشف');
+  document.getElementById('levelsGrid').innerHTML = levels.length ? levels.map(l=>{
+    const cls = 'stage-'+(l.stage||'مخصص');
+    return `<div class="level-card-big ${cls}" onclick="openLevelWorkspace('${l.id}')"><i class="fa-solid ${STAGE_ICON[l.stage]||'fa-layer-group'}"></i><h4>${l.name}</h4><span>${(l.subjects||[]).length} مادة — ${groupsOfLevel(l.id).length} فوج</span></div>`;
+  }).join('') : emptyStateHtml('fa-layer-group','لا توجد مستويات');
+}
+function openLevelModal(){
+  const html = `<h3 style="margin-bottom:14px;">إضافة مستوى جديد</h3>
+  <div class="form-grid">
+    <div class="form-field"><label>الاسم</label><input type="text" id="newLevelName"></div>
+    <div class="form-field"><label>المرحلة</label><select id="newLevelStage"><option>تحضيري</option><option>ابتدائي</option><option>متوسط</option><option>ثانوي</option></select></div>
+  </div><button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="submitNewLevel()">حفظ</button>`;
+  EliteAcademy.modal.openModal(html,{maxWidth:'420px'});
+}
+function submitNewLevel(){
+  const name = document.getElementById('newLevelName').value.trim();
+  if(!name){ showWarning('أدخل اسم المستوى'); return; }
+  const l = EliteAcademy.storage.saveRecord(K.levels,{name,stage:document.getElementById('newLevelStage').value,subjects:[],status:'نشط',isDemo:false});
+  EliteAcademy.utils.logAction('create','levels',l.id,`تمت إضافة مستوى: ${name}`,'success');
+  showSuccess('تمت الإضافة'); EliteAcademy.modal.closeModal(); renderLevelsList();
+}
+
+let currentLevelWorkspaceId = null;
+function openLevelWorkspace(levelId){
+  currentLevelWorkspaceId = levelId;
+  document.getElementById('levelsListSubview').style.display='none';
+  document.getElementById('levelWorkspaceSubview').style.display='block';
+  document.getElementById('groupWorkspaceSubview').style.display='none';
+  renderLevelWorkspace();
+}
+function backToLevelsList(){ renderLevelsList(); }
+function renderLevelWorkspace(){
+  const l = EliteAcademy.storage.findById(K.levels, currentLevelWorkspaceId);
+  const students = getData(K.students).filter(s=>s.level===l.name && s.status!=='مؤرشف');
+  const groups = groupsOfLevel(l.id);
+  const teacherIds = new Set(groups.map(g=>g.teacherId).filter(Boolean));
+  window._levelActiveSubject = window._levelActiveSubject || (l.subjects&&l.subjects[0]) || '';
+
+  document.getElementById('levelWorkspaceSubview').innerHTML = `
+    <a href="#" onclick="backToLevelsList();return false;" style="display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--text-muted);margin-bottom:14px;font-weight:700;"><i class="fa-solid fa-arrow-right"></i> العودة للمستويات</a>
+    <div class="group-header-card" style="background:linear-gradient(120deg,var(--primary-dark),var(--primary));border-radius:var(--radius-lg);padding:22px;color:#fff;margin-bottom:16px;"><h2 style="color:#fff;">${l.name}</h2></div>
+    <div class="mini-stats-row"><div class="mini-stat"><b>${students.length}</b><span>عدد التلاميذ</span></div><div class="mini-stat"><b>${groups.length}</b><span>عدد الأفواج</span></div><div class="mini-stat"><b>${(l.subjects||[]).length}</b><span>عدد المواد</span></div><div class="mini-stat"><b>${teacherIds.size}</b><span>عدد الأساتذة</span></div></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px;flex-wrap:wrap;gap:10px;">
+      <h3 style="font-size:14px;">المواد الدراسية</h3>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-sm btn-outline" onclick="openAddSubjectModal()"><i class="fa-solid fa-plus"></i> إضافة مادة</button>
+        <button class="btn btn-sm btn-primary" onclick="openGroupModal('${l.id}')"><i class="fa-solid fa-people-group"></i> إنشاء فوج</button>
+      </div>
+    </div>
+    <div id="subjectsChipsRow">${(l.subjects||[]).map(s=>`<span class="subject-chip-big ${window._levelActiveSubject===s?'active-subject':''}" onclick="selectLevelSubject('${s}')">${s} <i class="fa-solid fa-xmark" style="font-size:9px;margin-right:4px;" onclick="event.stopPropagation();removeSubject('${s}')"></i></span>`).join('') || '<p style="color:var(--text-muted);font-size:12px;">لا توجد مواد بعد</p>'}</div>
+
+    <h3 style="font-size:14px;margin:18px 0 10px;">الأفواج ${window._levelActiveSubject?'— '+window._levelActiveSubject:''}</h3>
+    <div class="grid-cards" id="levelGroupsGrid"></div>
+  `;
+  renderLevelGroupsGrid();
+}
+function selectLevelSubject(s){ window._levelActiveSubject=s; renderLevelWorkspace(); }
+function renderLevelGroupsGrid(){
+  const groups = groupsOfLevel(currentLevelWorkspaceId).filter(g=>!window._levelActiveSubject || g.subject===window._levelActiveSubject);
+  document.getElementById('levelGroupsGrid').innerHTML = groups.length ? groups.map(g=>{
+    const t = EliteAcademy.storage.findById(K.teachers,g.teacherId);
+    const count = studentsInGroup(g.id).length;
+    return `<div class="mini-card" onclick="openGroupWorkspace('${g.id}')">
+      <div class="mc-top"><div class="mc-avatar"><i class="fa-solid fa-people-group"></i></div><div><div class="mc-name">${g.groupName}</div><div class="mc-sub">${g.subject}</div></div></div>
+      <div class="mc-row"><span>الأستاذ</span><b>${t?t.firstname+' '+t.lastname:'—'}</b></div>
+      <div class="mc-row"><span>القاعة</span><b>${g.room}</b></div>
+      <div class="mc-row"><span>عدد التلاميذ</span><b>${count} / ${g.capacity}</b></div>
+    </div>`;
+  }).join('') : emptyStateHtml('fa-people-group','لا توجد أفواج لهذه المادة بعد');
+}
+function openAddSubjectModal(){
+  const html = `<h3 style="margin-bottom:14px;">إضافة مادة جديدة</h3><input type="text" id="newSubjectName" placeholder="اسم المادة" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;"><button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="submitAddSubject()">حفظ</button>`;
+  EliteAcademy.modal.openModal(html,{maxWidth:'380px'});
+}
+function submitAddSubject(){
+  const name = document.getElementById('newSubjectName').value.trim();
+  if(!name) return;
+  const l = EliteAcademy.storage.findById(K.levels, currentLevelWorkspaceId);
+  const subjects = [...(l.subjects||[]), name];
+  EliteAcademy.storage.updateRecord(K.levels, l.id, {subjects});
+  EliteAcademy.utils.logAction('update','levels',l.id,`تمت إضافة مادة "${name}" لمستوى ${l.name}`,'info');
+  showSuccess('تمت الإضافة'); EliteAcademy.modal.closeModal(); renderLevelWorkspace();
+}
+function removeSubject(subject){
+  EliteAcademy.modal.confirmAction(`سيتم حذف المادة "${subject}" من قائمة المواد (الأفواج المرتبطة بها تبقى محفوظة في الأرشيف التاريخي).`, ()=>{
+    const l = EliteAcademy.storage.findById(K.levels, currentLevelWorkspaceId);
+    EliteAcademy.storage.updateRecord(K.levels, l.id, {subjects:(l.subjects||[]).filter(s=>s!==subject)});
+    if(window._levelActiveSubject===subject) window._levelActiveSubject='';
+    renderLevelWorkspace();
+  }, {title:'تأكيد الحذف'});
+}
+function openGroupModal(levelId){
+  const l = EliteAcademy.storage.findById(K.levels, levelId||currentLevelWorkspaceId);
+  const teachers = getData(K.teachers), years = getData(K.academicYears);
+  const html = `<h3 style="margin-bottom:14px;">إنشاء فوج جديد — ${l.name}</h3>
+  <div class="form-grid">
+    <div class="form-field"><label>اسم الفوج</label><input type="text" id="grpName" placeholder="فوج 1"></div>
+    <div class="form-field"><label>المادة</label><select id="grpSubject">${(l.subjects||[]).map(s=>`<option>${s}</option>`).join('')}</select></div>
+    <div class="form-field"><label>الأستاذ</label><select id="grpTeacher">${teachers.map(t=>`<option value="${t.id}">${t.firstname} ${t.lastname}</option>`).join('')}</select></div>
+    <div class="form-field"><label>القاعة</label><input type="text" id="grpRoom"></div>
+    <div class="form-field"><label>السعة</label><input type="number" id="grpCapacity" value="20"></div>
+    <div class="form-field"><label>السنة الدراسية</label><select id="grpYear">${years.map(y=>`<option value="${y.id}" ${y.isCurrent?'selected':''}>${y.label}</option>`).join('')}</select></div>
+  </div><button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="submitGroup('${l.id}')">إنشاء الفوج</button>`;
+  EliteAcademy.modal.openModal(html,{maxWidth:'560px'});
+}
+function submitGroup(levelId){
+  const name = document.getElementById('grpName').value.trim();
+  if(!name){ showWarning('أدخل اسم الفوج'); return; }
+  const g = EliteAcademy.storage.saveRecord(K.groups,{groupName:name,levelId,subject:document.getElementById('grpSubject').value,teacherId:document.getElementById('grpTeacher').value,room:document.getElementById('grpRoom').value,capacity:Number(document.getElementById('grpCapacity').value),academicYearId:document.getElementById('grpYear').value,status:'نشط',isDemo:false});
+  EliteAcademy.utils.logAction('create','groups',g.id,`تم إنشاء فوج جديد: ${name} (${g.subject})`,'success');
+  showSuccess('تم إنشاء الفوج'); EliteAcademy.modal.closeModal();
+  if(document.getElementById('view-levels').classList.contains('active')) renderLevelWorkspace();
+}
+
+/* ---- Group Workspace ---- */
+function openGroupWorkspace(groupId){
+  showView('levels');
+  document.getElementById('levelsListSubview').style.display='none';
+  document.getElementById('levelWorkspaceSubview').style.display='none';
+  document.getElementById('groupWorkspaceSubview').style.display='block';
+  window._currentGroupId = groupId;
+  renderGroupWorkspaceContent();
+}
+function backToLevelWorkspace(){ document.getElementById('groupWorkspaceSubview').style.display='none'; document.getElementById('levelWorkspaceSubview').style.display='block'; renderLevelWorkspace(); }
+function renderGroupWorkspaceContent(){
+  const g = EliteAcademy.storage.findById(K.groups, window._currentGroupId);
+  const l = EliteAcademy.storage.findById(K.levels, g.levelId);
+  const t = EliteAcademy.storage.findById(K.teachers, g.teacherId);
+  const students = studentsInGroup(g.id);
+  const lessons = getData(K.lessons).filter(les=>les.groupId===g.id);
+  const att = getData(K.attendance).filter(a=>a.groupId===g.id);
+  const pct = att.length?Math.round(att.filter(a=>a.status==='حاضر').length/att.length*100):100;
+
+  document.getElementById('groupWorkspaceSubview').innerHTML = `
+    <a href="#" onclick="backToLevelWorkspace();return false;" style="display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--text-muted);margin-bottom:14px;font-weight:700;"><i class="fa-solid fa-arrow-right"></i> العودة لـ ${l?l.name:''}</a>
+    <div style="background:linear-gradient(120deg,var(--primary-dark),var(--primary));border-radius:var(--radius-lg);padding:22px;color:#fff;margin-bottom:16px;"><h2 style="color:#fff;">${g.groupName} — ${g.subject}</h2><p style="color:rgba(255,255,255,0.75);font-size:12.5px;">${l?l.name:''} — الأستاذ: ${t?t.firstname+' '+t.lastname:'—'} — القاعة: ${g.room}</p></div>
+    <div class="mini-stats-row"><div class="mini-stat"><b>${students.length}</b><span>عدد التلاميذ</span></div><div class="mini-stat"><b>${lessons.length}</b><span>الحصص الأسبوعية</span></div><div class="mini-stat"><b>${pct}%</b><span>نسبة الحضور</span></div></div>
+    <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+      <button class="btn btn-sm btn-outline" onclick="switchGroupWsTab('students')">التلاميذ</button>
+      <button class="btn btn-sm btn-outline" onclick="switchGroupWsTab('schedule')">الجدول</button>
+      <button class="btn btn-sm btn-outline" onclick="switchGroupWsTab('lessons')">الحصص</button>
+      <button class="btn btn-sm btn-primary" onclick="openLessonAddModal('${g.id}')"><i class="fa-solid fa-plus"></i> إضافة حصة</button>
+    </div>
+    <div id="groupWsTabContent"></div>`;
+  switchGroupWsTab('students');
+}
+function switchGroupWsTab(tab){
+  const g = EliteAcademy.storage.findById(K.groups, window._currentGroupId);
+  const container = document.getElementById('groupWsTabContent');
+  if(tab==='students'){
+    const students = studentsInGroup(g.id);
+    container.innerHTML = `<div class="grid-cards">${students.length?students.map(s=>`<div class="mini-card" onclick="openStudentProfile('${s.id}')"><div class="mc-top"><div class="mc-avatar">${initials(s.firstname,s.lastname)}</div><div><div class="mc-name">${s.firstname} ${s.lastname}</div><div class="mc-sub ltr">${s.cardNumber}</div></div></div><div class="mc-row"><span>الولي</span><b>${s.parentName}</b></div></div>`).join(''):emptyStateHtml('fa-user-graduate','لا يوجد تلاميذ')}</div>`;
+  } else if(tab==='schedule'){
+    const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة'];
+    const lessons = getData(K.lessons).filter(l=>l.groupId===g.id);
+    container.innerHTML = `<div class="timetable-grid">${days.map(day=>{const dl=lessons.filter(l=>l.day===day).sort((a,b)=>a.startTime.localeCompare(b.startTime));return `<div class="timetable-day"><h5>${day}</h5>${dl.length?dl.map(l=>`<div class="tt-lesson" onclick="openLessonFile('${l.id}')"><b>${l.startTime}</b><span>${g.subject}</span></div>`).join(''):'<div class="tt-empty">لا حصص</div>'}</div>`}).join('')}</div>`;
+  } else if(tab==='lessons'){
+    const lessons = getData(K.lessons).filter(l=>l.groupId===g.id);
+    container.innerHTML = `<div class="grid-cards">${lessons.length?lessons.map(l=>`<div class="lesson-file-card" onclick="openLessonFile('${l.id}')"><i class="fa-solid fa-folder"></i><b>${g.subject}</b><span>${l.day} — ${l.startTime}</span></div>`).join(''):emptyStateHtml('fa-folder-open','لا توجد حصص بعد')}</div>`;
+  }
+}
+function openLessonAddModal(groupId){
+  const g = EliteAcademy.storage.findById(K.groups, groupId);
+  const html = `<h3 style="margin-bottom:14px;">إضافة حصة — ${g.subject}</h3>
+  <div class="form-grid">
+    <div class="form-field"><label>اليوم</label><select id="lesDay"><option>الأحد</option><option>الاثنين</option><option>الثلاثاء</option><option>الأربعاء</option><option>الخميس</option><option>الجمعة</option></select></div>
+    <div class="form-field"><label>وقت البداية</label><input type="time" id="lesStart" value="08:00"></div>
+    <div class="form-field"><label>وقت النهاية</label><input type="time" id="lesEnd" value="09:00"></div>
+  </div><button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="submitLesson('${groupId}')">حفظ</button>`;
+  EliteAcademy.modal.openModal(html,{maxWidth:'420px'});
+}
+function submitLesson(groupId){
+  const g = EliteAcademy.storage.findById(K.groups, groupId);
+  const les = EliteAcademy.storage.saveRecord(K.lessons,{groupId,teacherId:g.teacherId,day:document.getElementById('lesDay').value,startTime:document.getElementById('lesStart').value,endTime:document.getElementById('lesEnd').value,room:g.room,academicYearId:g.academicYearId,isDemo:false});
+  EliteAcademy.utils.logAction('create','lessons',les.id,`تمت إضافة حصة ${g.subject} للفوج ${g.groupName}`,'success');
+  showSuccess('تمت إضافة الحصة'); EliteAcademy.modal.closeModal(); renderGroupWorkspaceContent();
+}
+
+/* ---- Lesson File (attendance) ---- */
+function openLessonFile(lessonId){
+  const l = EliteAcademy.storage.findById(K.lessons, lessonId);
+  const g = EliteAcademy.storage.findById(K.groups, l.groupId);
+  const t = EliteAcademy.storage.findById(K.teachers, l.teacherId);
+  const students = studentsInGroup(g.id);
+  const today = new Date().toISOString().split('T')[0];
+  const existing = getData(K.attendance).filter(a=>a.lessonId===lessonId && a.date===today);
+  window._lessonAttState = {}; students.forEach(s=>{ const ex=existing.find(a=>a.studentId===s.id); window._lessonAttState[s.id]=ex?ex.status:'حاضر'; });
+
+  const html = `
+    <div style="text-align:center;margin-bottom:16px;"><h3>${g.subject}</h3><p style="font-size:12px;color:var(--text-muted);">${l.startTime} — ${l.endTime}</p></div>
+    <div class="info-grid-2" style="margin-bottom:16px;"><div class="info-item"><span>الفوج</span><b>${g.groupName}</b></div><div class="info-item"><span>الأستاذ</span><b>${t?t.firstname+' '+t.lastname:'—'}</b></div><div class="info-item"><span>القاعة</span><b>${g.room}</b></div><div class="info-item"><span>التاريخ</span><b>${new Date().toLocaleDateString('ar-DZ')}</b></div></div>
+    <h4 style="font-size:13px;margin-bottom:8px;">قائمة تلاميذ الحصة</h4>
+    <div style="max-height:320px;overflow-y:auto;">${students.map(s=>`
+      <div class="lesson-row" data-student="${s.id}"><div class="lesson-info" style="flex:1;"><b>${s.firstname} ${s.lastname}</b></div>
+      <div class="att-pill-row">
+        <button class="att-pill ${window._lessonAttState[s.id]==='حاضر'?'p-present':''}" onclick="setLesAtt('${s.id}','حاضر',this)">حاضر</button>
+        <button class="att-pill ${window._lessonAttState[s.id]==='غائب'?'p-absent':''}" onclick="setLesAtt('${s.id}','غائب',this)">غائب</button>
+        <button class="att-pill ${window._lessonAttState[s.id]==='متأخر'?'p-late':''}" onclick="setLesAtt('${s.id}','متأخر',this)">متأخر</button>
+        <button class="att-pill ${window._lessonAttState[s.id]==='غياب مبرر'?'p-excused':''}" onclick="setLesAtt('${s.id}','غياب مبرر',this)">مبرر</button>
+      </div></div>`).join('')}</div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="saveLessonFile('${lessonId}')">حفظ الحضور</button>
+    <h4 style="font-size:12.5px;margin-top:20px;color:var(--text-muted);">سجل تاريخي لهذه الحصة</h4>
+    <div style="max-height:160px;overflow-y:auto;margin-top:8px;">${renderLessonHistory(lessonId)}</div>`;
+  EliteAcademy.modal.openModal(html,{maxWidth:'620px'});
+}
+function setLesAtt(id,status,btn){ window._lessonAttState[id]=status; const row=btn.closest('.lesson-row'); row.querySelectorAll('.att-pill').forEach(p=>p.className='att-pill'); const map={'حاضر':'p-present','غائب':'p-absent','متأخر':'p-late','غياب مبرر':'p-excused'}; row.querySelectorAll('.att-pill').forEach((p,i)=>{const labels=['حاضر','غائب','متأخر','غياب مبرر']; if(labels[i]===status)p.classList.add(map[status]);}); }
+function saveLessonFile(lessonId){
+  const l = EliteAcademy.storage.findById(K.lessons, lessonId);
+  const today = new Date().toISOString().split('T')[0];
+  let attendance = getData(K.attendance);
+  Object.entries(window._lessonAttState).forEach(([studentId,status])=>{
+    const student = EliteAcademy.storage.findById(K.students,studentId);
+    const idx = attendance.findIndex(a=>a.studentId===studentId&&a.lessonId===lessonId&&a.date===today);
+    const rec = {id:idx>-1?attendance[idx].id:EliteAcademy.storage.generateId('att'),studentId,studentName:`${student.firstname} ${student.lastname}`,groupId:l.groupId,lessonId,teacherId:l.teacherId,date:today,status,note:'',createdAt:idx>-1?attendance[idx].createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),isDemo:false};
+    if(idx>-1) attendance[idx]=rec; else attendance.push(rec);
+  });
+  EliteAcademy.storage.setData(K.attendance,attendance);
+  const g = EliteAcademy.storage.findById(K.groups,l.groupId);
+  EliteAcademy.utils.logAction('create','attendance','',`تم تسجيل حضور حصة ${g.subject} للفوج ${g.groupName}`,'success');
+  showSuccess('تم حفظ الحضور — تحدثت كل الواجهات المرتبطة تلقائيًا');
+  EliteAcademy.modal.closeModal();
+  renderDashboard();
+  if(window._currentGroupId) renderGroupWorkspaceContent();
+}
+function renderLessonHistory(lessonId){
+  const records = getData(K.attendance).filter(a=>a.lessonId===lessonId);
+  const byDate = {}; records.forEach(r=>{ if(!byDate[r.date]) byDate[r.date]=[]; byDate[r.date].push(r); });
+  const dates = Object.keys(byDate).sort().reverse();
+  return dates.length ? dates.map(d=>`<div style="font-size:11px;padding:6px 0;border-top:1px dashed var(--border);"><b>${d}</b> — حاضر: ${byDate[d].filter(r=>r.status==='حاضر').length} / غائب: ${byDate[d].filter(r=>r.status==='غائب').length}</div>`).join('') : '<p style="font-size:11px;color:var(--text-muted);">لا يوجد سجل سابق</p>';
+}
+
+/* =========================================================================
+   SCHEDULE VIEW (level -> group -> lesson files, section 12)
+   ========================================================================= */
+function renderScheduleLevelsPick(){
+  document.getElementById('scheduleLevelPick').style.display='block';
+  document.getElementById('scheduleGroupPick').style.display='none';
+  document.getElementById('scheduleLessonsList').style.display='none';
+  const levels = getData(K.levels).filter(l=>l.status!=='مؤرشف');
+  document.getElementById('scheduleLevelsGrid').innerHTML = levels.map(l=>`<div class="level-card-big stage-${l.stage||'مخصص'}" onclick="scheduleShowGroups('${l.id}')"><i class="fa-solid ${STAGE_ICON[l.stage]||'fa-layer-group'}"></i><h4>${l.name}</h4><span>${groupsOfLevel(l.id).length} فوج</span></div>`).join('');
+}
+function scheduleShowGroups(levelId){
+  window._scheduleLevelId = levelId;
+  document.getElementById('scheduleLevelPick').style.display='none';
+  document.getElementById('scheduleGroupPick').style.display='block';
+  document.getElementById('scheduleLessonsList').style.display='none';
+  const l = EliteAcademy.storage.findById(K.levels, levelId);
+  const groups = groupsOfLevel(levelId);
+  document.getElementById('scheduleGroupPick').innerHTML = `
+    <a href="#" onclick="renderScheduleLevelsPick();return false;" style="display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--text-muted);margin-bottom:14px;font-weight:700;"><i class="fa-solid fa-arrow-right"></i> العودة للمستويات</a>
+    <h3 style="margin-bottom:14px;">${l.name} — اختر الفوج</h3>
+    <div class="grid-cards">${groups.map(g=>`<div class="mini-card" onclick="scheduleShowLessons('${g.id}')"><div class="mc-top"><div class="mc-avatar"><i class="fa-solid fa-people-group"></i></div><div><div class="mc-name">${g.groupName}</div><div class="mc-sub">${g.subject}</div></div></div></div>`).join('') || emptyStateHtml('fa-people-group','لا توجد أفواج')}</div>`;
+}
+function scheduleShowLessons(groupId){
+  document.getElementById('scheduleGroupPick').style.display='none';
+  document.getElementById('scheduleLessonsList').style.display='block';
+  const g = EliteAcademy.storage.findById(K.groups, groupId);
+  const lessons = getData(K.lessons).filter(l=>l.groupId===groupId);
+  document.getElementById('scheduleLessonsList').innerHTML = `
+    <a href="#" onclick="scheduleShowGroups('${g.levelId}');return false;" style="display:inline-flex;gap:6px;align-items:center;font-size:13px;color:var(--text-muted);margin-bottom:14px;font-weight:700;"><i class="fa-solid fa-arrow-right"></i> العودة للأفواج</a>
+    <h3 style="margin-bottom:14px;">${g.groupName} — ${g.subject}</h3>
+    <button class="btn btn-sm btn-primary" style="margin-bottom:14px;" onclick="openLessonAddModal('${groupId}')"><i class="fa-solid fa-plus"></i> إضافة حصة</button>
+    <div class="grid-cards">${lessons.length?lessons.map(l=>`<div class="lesson-file-card" onclick="openLessonFile('${l.id}')"><i class="fa-solid fa-folder"></i><b>${g.subject}</b><span>${l.day} — ${l.startTime}</span></div>`).join(''):emptyStateHtml('fa-folder-open','لا توجد حصص بعد')}</div>`;
+}
+
+/* =========================================================================
+   STUDENTS + PROFILE (with per-subject subscriptions & invoices)
+   ========================================================================= */
+function renderStudentsView(){
+  const all = getData(K.students).filter(s=>s.status!=='مؤرشف');
+  document.getElementById('studentsMiniStats').innerHTML = [{v:all.length,l:'الإجمالي'},{v:all.filter(s=>s.status==='نشط').length,l:'النشطون'},{v:all.filter(s=>s.gender==='ذكر').length,l:'ذكور'},{v:all.filter(s=>s.gender==='أنثى').length,l:'إناث'}].map(s=>`<div class="mini-stat"><b>${s.v}</b><span>${s.l}</span></div>`).join('');
+  const q = document.getElementById('studentsSearchBox').value.trim();
+  let list = all;
+  if(q) list = list.filter(s=>s.cardNumber.includes(q)||`${s.firstname} ${s.lastname}`.includes(q)||(s.parentName&&s.parentName.includes(q)));
+  document.getElementById('studentsGrid').innerHTML = list.length ? list.map(s=>`
+    <div class="mini-card" onclick="openStudentProfile('${s.id}')"><div class="mc-top"><div class="mc-avatar">${initials(s.firstname,s.lastname)}</div><div><div class="mc-name">${s.firstname} ${s.lastname}</div><div class="mc-sub">${s.level}</div></div></div>
+    <div class="mc-row"><span>رقم البطاقة</span><b class="ltr">${s.cardNumber}</b></div><div class="mc-row"><span>المواد</span><b>${subscriptionsOfStudent(s.id).length}</b></div></div>`).join('') : emptyStateHtml('fa-user-graduate','لا توجد نتائج');
+  document.getElementById('studentsSearchBox').oninput = renderStudentsView;
+}
+function openStudentModal(){ showWarning('لإضافة تلميذ جديد، استخدم مسار طلبات التسجيل → قبول الطلب، لضمان الربط الصحيح بالمستوى والفوج والمادة.'); showView('requests'); }
+function paymentStatusOfSubject(studentId, subject){
+  const paid = getData(K.payments).filter(p=>p.studentId===studentId && p.subject===subject && p.status!=='ملغى').reduce((s,p)=>s+Number(p.amount||0),0);
+  const sub = getData(K.subscriptions).find(su=>su.studentId===studentId && su.subject===subject);
+  return paid >= Number(sub?sub.monthlyFee:0) ? 'مدفوع' : 'متبقي';
+}
+
+let currentProfileStudentId=null;
+function openStudentProfile(id){ currentProfileStudentId=id; showView('student-profile'); renderStudentProfile(); }
+function renderStudentProfile(){
+  const s = EliteAcademy.storage.findById(K.students, currentProfileStudentId);
+  if(!s){ return; }
+  document.getElementById('studentProfileHeader').innerHTML = `
+    <div class="ph-avatar">${initials(s.firstname,s.lastname)}</div>
+    <div class="ph-main"><div class="ph-name">${s.firstname} ${s.lastname}</div><div class="ph-namefr">${s.fullFr||''}</div>
+    <div class="ph-meta-row"><span class="ph-meta-chip">بطاقة: <b class="ltr">${s.cardNumber}</b></span><span class="ph-meta-chip">${s.level}</span><span class="badge ${EliteAcademy.utils.statusBadgeClass(s.status)}">${s.status}</span></div></div>
+    <div class="ph-actions"><button class="btn btn-outline btn-sm" onclick="printStudentCard('${s.id}')"><i class="fa-solid fa-id-card"></i> طباعة البطاقة</button></div>`;
+  document.getElementById('studentQuickInfo').innerHTML = [{l:'تاريخ التسجيل',v:EliteAcademy.utils.formatDate(s.registeredAt)},{l:'الولي',v:s.parentName},{l:'هاتف الولي',v:s.parentPhone,ltr:true},{l:'عدد المواد',v:subscriptionsOfStudent(s.id).length}].map(i=>`<div class="qi-item"><span>${i.l}</span><b class="${i.ltr?'ltr':''}">${i.v}</b></div>`).join('');
+  document.getElementById('studentProfileTabs').innerHTML = ['المعلومات الأساسية','الدراسة','الحضور','الاشتراكات','السجل'].map((t,i)=>`<button class="profile-tab ${i===0?'active':''}" onclick="switchStProfTab(${i},this)">${t}</button>`).join('');
+  renderStProfTab(0);
+}
+function switchStProfTab(i,el){ el.parentElement.querySelectorAll('.profile-tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); renderStProfTab(i); }
+function renderStProfTab(idx){
+  const s = EliteAcademy.storage.findById(K.students, currentProfileStudentId);
+  const container = document.getElementById('studentProfileTabContent');
+  if(idx===0){
+    container.innerHTML = `<div class="info-grid-2"><div class="info-item"><span>الاسم</span><b>${s.firstname} ${s.lastname}</b></div><div class="info-item"><span>بالفرنسية</span><b class="ltr">${s.fullFr||'—'}</b></div><div class="info-item"><span>تاريخ الميلاد</span><b>${s.dob||'—'}</b></div><div class="info-item"><span>الجنس</span><b>${s.gender||'—'}</b></div><div class="info-item" style="grid-column:1/-1;"><span>الولي</span><b>${s.parentName} — ${s.parentPhone}</b></div></div>`;
+  } else if(idx===1){
+    const subs = subscriptionsOfStudent(s.id);
+    container.innerHTML = subs.length ? subs.map(su=>{const g=EliteAcademy.storage.findById(K.groups,su.groupId);const t=EliteAcademy.storage.findById(K.teachers,su.teacherId);return `<div class="subscription-card"><div class="sub-head"><b>${su.subject}</b><span class="badge badge-accepted">${g?g.groupName:''}</span></div><p style="font-size:12px;color:var(--text-muted);">الأستاذ: ${t?t.firstname+' '+t.lastname:'—'}</p></div>`;}).join('') : emptyStateHtml('fa-book','لا توجد مواد مسجلة');
+  } else if(idx===2){
+    const subs = subscriptionsOfStudent(s.id);
+    const groupIds = subs.map(su=>su.groupId);
+    const att = getData(K.attendance).filter(a=>a.studentId===s.id);
+    const present = att.filter(a=>a.status==='حاضر').length;
+    container.innerHTML = `<div class="mini-stats-row"><div class="mini-stat"><b>${att.length}</b><span>إجمالي الحصص</span></div><div class="mini-stat"><b style="color:var(--success);">${present}</b><span>حضور</span></div><div class="mini-stat"><b style="color:var(--danger);">${att.filter(a=>a.status==='غائب').length}</b><span>غياب</span></div><div class="mini-stat"><b>${att.length?Math.round(present/att.length*100):100}%</b><span>النسبة</span></div></div>
+      <div class="panel"><div style="overflow-x:auto;"><table class="dtable"><thead><tr><th>التاريخ</th><th>المادة</th><th>الفوج</th><th>الحالة</th></tr></thead><tbody>${att.length?att.slice().reverse().map(a=>{const g=EliteAcademy.storage.findById(K.groups,a.groupId);return `<tr><td>${a.date}</td><td>${g?g.subject:''}</td><td>${g?g.groupName:''}</td><td><span class="badge ${a.status==='حاضر'?'badge-accepted':'badge-rejected'}">${a.status}</span></td></tr>`}).join(''):'<tr><td colspan="4">لا سجلات</td></tr>'}</tbody></table></div></div>`;
+  } else if(idx===3){
+    const subs = subscriptionsOfStudent(s.id);
+    const totalExpected = subs.reduce((sum,su)=>sum+Number(su.monthlyFee||0),0);
+    const paid = getData(K.payments).filter(p=>p.studentId===s.id&&p.status!=='ملغى').reduce((sum,p)=>sum+Number(p.amount||0),0);
+    container.innerHTML = `<div class="mini-stats-row"><div class="mini-stat"><b>${EliteAcademy.utils.formatCurrency(totalExpected)}</b><span>مجموع الاشتراكات</span></div><div class="mini-stat"><b>${EliteAcademy.utils.formatCurrency(paid)}</b><span>المدفوع</span></div><div class="mini-stat"><b>${EliteAcademy.utils.formatCurrency(Math.max(totalExpected-paid,0))}</b><span>المتبقي</span></div></div>
+      ${subs.map(su=>`<div class="subscription-card"><div class="sub-head"><b>${su.subject}</b><span class="badge ${paymentStatusOfSubject(s.id,su.subject)==='مدفوع'?'badge-accepted':'badge-rejected'}">${paymentStatusOfSubject(s.id,su.subject)}</span></div><p style="font-size:12px;color:var(--text-muted);">${EliteAcademy.utils.formatCurrency(su.monthlyFee)} / شهريًا</p><button class="btn btn-sm btn-primary" style="margin-top:8px;" onclick="openPaymentModal('${s.id}','${su.subject}')">دفع اشتراك هذه المادة</button></div>`).join('') || emptyStateHtml('fa-sack-dollar','لا توجد اشتراكات')}`;
+  } else if(idx===4){
+    const logs = getData(K.logs).filter(l=>l.entityId===s.id);
+    container.innerHTML = `<div class="panel"><div style="overflow-x:auto;"><table class="dtable"><thead><tr><th>الوصف</th><th>التاريخ</th></tr></thead><tbody>${logs.length?logs.map(l=>`<tr><td>${l.description}</td><td>${l.date}</td></tr>`).join(''):'<tr><td colspan="2">لا سجل</td></tr>'}</tbody></table></div></div>`;
+  }
+}
+function printStudentCard(id){
+  const s = EliteAcademy.storage.findById(K.students,id);
+  const settings = EliteAcademy.utils.getSettings();
+  const w = window.open('','_blank');
+  w.document.write(`<html dir="rtl"><head><title>بطاقة</title><style>body{font-family:Cairo,sans-serif;padding:40px;}</style></head><body><h2>${settings.institutionName}</h2><h3>${s.firstname} ${s.lastname}</h3><p>رقم البطاقة: <b>${s.cardNumber}</b></p><p>المستوى: ${s.level}</p><p>الولي: ${s.parentName} — ${s.parentPhone}</p></body></html>`);
+  w.document.close(); w.print();
+}
+
+/* =========================================================================
+   TEACHERS (with profile showing groups/lessons automatically)
+   ========================================================================= */
+function renderTeachersView(){
+  const q = document.getElementById('teachersSearchBox').value.trim();
+  let teachers = getData(K.teachers).filter(t=>(t.status||'نشط')!=='مؤرشف');
+  if(q) teachers = teachers.filter(t=>`${t.firstname} ${t.lastname}`.includes(q)||(t.subject&&t.subject.includes(q)));
+  document.getElementById('teachersGrid').innerHTML = teachers.length ? teachers.map(t=>`
+    <div class="mini-card" onclick="openTeacherProfile('${t.id}')"><div class="mc-top"><div class="mc-avatar" style="background:linear-gradient(135deg,var(--secondary),var(--primary-dark));">${initials(t.firstname,t.lastname)}</div><div><div class="mc-name">${t.firstname} ${t.lastname}</div><div class="mc-sub">${t.subject||'—'}</div></div></div>
+    <div class="mc-row"><span>عدد الأفواج</span><b>${getData(K.groups).filter(g=>g.teacherId===t.id).length}</b></div></div>`).join('') : emptyStateHtml('fa-chalkboard-user','لا يوجد أساتذة');
+  document.getElementById('teachersSearchBox').oninput = renderTeachersView;
+}
+function openTeacherModal(){
+  const html = `<h3 style="margin-bottom:14px;">إضافة أستاذ جديد</h3><div class="form-grid">
+    <div class="form-field" data-field="firstname"><label>الاسم *</label><input type="text" name="firstname"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="lastname"><label>اللقب *</label><input type="text" name="lastname"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="subject"><label>التخصص *</label><input type="text" name="subject"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="phone"><label>الهاتف *</label><input type="tel" name="phone" class="ltr"><span class="error-text">مطلوب</span></div>
+  </div><button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" id="teacherSubmitBtn">حفظ</button>`;
+  const wrap = document.createElement('form'); wrap.id='teacherForm'; wrap.innerHTML=html;
+  EliteAcademy.modal.openModal(wrap.outerHTML,{maxWidth:'520px'});
+  document.getElementById('teacherForm').addEventListener('submit',function(e){
+    e.preventDefault();
+    this.querySelectorAll('.form-field[data-field]').forEach(f=>f.classList.remove('has-error'));
+    let valid=true; ['firstname','lastname','subject','phone'].forEach(n=>{if(!this[n].value){this[n].closest('.form-field').classList.add('has-error');valid=false;}});
+    if(!valid)return;
+    const data=EliteAcademy.utils.serializeForm(this);
+    const t=EliteAcademy.storage.saveRecord(K.teachers,{...data,status:'نشط',isDemo:false});
+    EliteAcademy.utils.logAction('create','teachers',t.id,`تمت إضافة الأستاذ ${data.firstname} ${data.lastname}`,'success');
+    showSuccess('تمت الإضافة'); EliteAcademy.modal.closeModal(); renderTeachersView();
+  });
+}
+function openTeacherProfile(id){
+  showView('teacher-profile');
+  const t = EliteAcademy.storage.findById(K.teachers, id);
+  const groups = getData(K.groups).filter(g=>g.teacherId===id);
+  const lessons = getData(K.lessons).filter(l=>l.teacherId===id);
+  document.getElementById('teacherProfileContent').innerHTML = `
+    <div class="profile-header-card"><div class="ph-avatar">${initials(t.firstname,t.lastname)}</div><div class="ph-main"><div class="ph-name">${t.firstname} ${t.lastname}</div><div class="ph-namefr">${t.subject}</div></div></div>
+    <div class="mini-stats-row"><div class="mini-stat"><b>${groups.length}</b><span>الأفواج</span></div><div class="mini-stat"><b>${lessons.length}</b><span>الحصص الأسبوعية</span></div></div>
+    <h4 style="font-size:13.5px;margin:16px 0 10px;">الأفواج المسندة</h4>
+    <div class="grid-cards">${groups.length?groups.map(g=>`<div class="mini-card" onclick="openGroupWorkspace('${g.id}')"><b>${g.groupName}</b><p style="font-size:11px;color:var(--text-muted);">${g.subject}</p></div>`).join(''):emptyStateHtml('fa-people-group','لا توجد أفواج مسندة')}</div>`;
+}
+
+/* =========================================================================
+   PARENTS (multiple children view)
+   ========================================================================= */
+function renderParentsView(){
+  const q = document.getElementById('parentsSearchBox').value.trim();
+  let parents = getData(K.parents);
+  if(q) parents = parents.filter(p=>`${p.firstname} ${p.lastname}`.includes(q)||p.phone.includes(q)||childrenOf(p.id).some(c=>`${c.firstname} ${c.lastname}`.includes(q)));
+  document.getElementById('parentsGrid').innerHTML = parents.length ? parents.map(p=>{
+    const kids = childrenOf(p.id);
+    return `<div class="mini-card" style="cursor:default;"><div class="mc-top"><div class="mc-avatar">${initials(p.firstname,p.lastname)}</div><div><div class="mc-name">${p.firstname} ${p.lastname}</div><div class="mc-sub ltr">${p.phone}</div></div></div>
+    <div class="mc-row"><span>عدد الأبناء</span><b>${kids.length}</b></div>
+    ${kids.map(k=>`<div class="mc-row" style="cursor:pointer;" onclick="openStudentProfile('${k.id}')"><span>${k.firstname} ${k.lastname}</span><b>${k.level}</b></div>`).join('')}</div>`;
+  }).join('') : emptyStateHtml('fa-people-roof','لا يوجد أولياء');
+  document.getElementById('parentsSearchBox').oninput = renderParentsView;
+}
+function childrenOf(parentId){ return getData(K.students).filter(s=>s.parentId===parentId && s.status!=='مؤرشف'); }
+function openParentModal(){
+  const html = `<h3 style="margin-bottom:14px;">إضافة ولي أمر</h3><div class="form-grid">
+    <div class="form-field" data-field="firstname"><label>الاسم *</label><input type="text" name="firstname"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="lastname"><label>اللقب *</label><input type="text" name="lastname"><span class="error-text">مطلوب</span></div>
+    <div class="form-field" data-field="phone"><label>الهاتف *</label><input type="tel" name="phone" class="ltr"><span class="error-text">مطلوب</span></div>
+  </div><button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;">حفظ</button>`;
+  const form=document.createElement('form'); form.id='parentForm'; form.innerHTML=html;
+  EliteAcademy.modal.openModal(form.outerHTML,{maxWidth:'480px'});
+  document.getElementById('parentForm').addEventListener('submit',function(e){
+    e.preventDefault(); this.querySelectorAll('.form-field[data-field]').forEach(f=>f.classList.remove('has-error'));
+    let valid=true; ['firstname','lastname','phone'].forEach(n=>{if(!this[n].value){this[n].closest('.form-field').classList.add('has-error');valid=false;}});
+    if(!valid)return;
+    const data=EliteAcademy.utils.serializeForm(this);
+    const p=EliteAcademy.storage.saveRecord(K.parents,{...data,status:'نشط',isDemo:false});
+    EliteAcademy.utils.logAction('create','parents',p.id,`تمت إضافة ولي أمر: ${data.firstname} ${data.lastname}`,'success');
+    showSuccess('تمت الإضافة'); EliteAcademy.modal.closeModal(); renderParentsView();
+  });
+}
+
+/* =========================================================================
+   FINANCE (subscription-based receipts)
+   ========================================================================= */
+function renderFinanceView(){
+  const settings = EliteAcademy.utils.getSettings();
+  const payments = getData(K.payments).filter(p=>p.status!=='ملغى');
+  const subscriptions = getData(K.subscriptions).filter(su=>su.status!=='ملغى');
+  const totalExpected = subscriptions.reduce((s,su)=>s+Number(su.monthlyFee||0),0);
+  const totalPaid = payments.reduce((s,p)=>s+Number(p.amount||0),0);
+  document.getElementById('financeKpiRow').innerHTML = [
+    {i:'fa-sack-dollar',c:'green',v:EliteAcademy.utils.formatCurrency(totalPaid),l:'المحصل'},
+    {i:'fa-circle-exclamation',c:'red',v:EliteAcademy.utils.formatCurrency(Math.max(totalExpected-totalPaid,0)),l:'المتبقي'},
+    {i:'fa-file-invoice-dollar',c:'gold',v:subscriptions.length,l:'عدد الاشتراكات'}
+  ].map(k=>`<div class="dstat-card"><div class="dstat-icon ${k.c}"><i class="fa-solid ${k.i}"></i></div><div><div class="dstat-num" style="font-size:15px;">${k.v}</div><div class="dstat-label">${k.l}</div></div></div>`).join('');
+  document.getElementById('paymentsTableBody').innerHTML = payments.length ? payments.slice().reverse().slice(0,20).map(p=>`<tr><td class="ltr">${p.receiptNumber}</td><td>${p.studentName}</td><td>${p.subject||'—'}</td><td>${EliteAcademy.utils.formatCurrency(p.amount)}</td><td>${p.date}</td><td><button class="btn btn-sm btn-outline" onclick="showReceipt('${p.id}')"><i class="fa-solid fa-receipt"></i></button></td></tr>`).join('') : `<tr><td colspan="6">${emptyStateHtml('fa-sack-dollar','لا مدفوعات')}</td></tr>`;
+}
+function openPaymentModal(prefilledStudentId, prefilledSubject){
+  const html = `<h3 style="margin-bottom:14px;">تسجيل دفعة اشتراك</h3>
+  <div class="form-field" style="margin-bottom:8px;"><label>التلميذ</label><input type="text" id="payStudentSearch" placeholder="ابحث بالاسم أو رقم البطاقة..."></div>
+  <div id="payStudentResults" style="font-size:12px;max-height:100px;overflow-y:auto;"></div>
+  <input type="hidden" id="paySelectedStudentId">
+  <div class="form-grid" style="margin-top:10px;">
+    <div class="form-field"><label>المادة</label><select id="paySubject"></select></div>
+    <div class="form-field"><label>المبلغ (دج)</label><input type="number" id="payAmount"></div>
+  </div><button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:16px;" onclick="submitPayment()">تسجيل ووصل</button>`;
+  EliteAcademy.modal.openModal(html,{maxWidth:'460px'});
+  document.getElementById('payStudentSearch').addEventListener('input',function(){
+    const q=this.value.trim(); const box=document.getElementById('payStudentResults'); if(!q){box.innerHTML='';return;}
+    const matches=getData(K.students).filter(s=>s.status!=='مؤرشف'&&(s.cardNumber.includes(q)||`${s.firstname} ${s.lastname}`.includes(q))).slice(0,5);
+    box.innerHTML = matches.map(s=>`<div style="cursor:pointer;padding:6px;" onclick="selectPayStudent('${s.id}','${s.firstname} ${s.lastname}')">${s.firstname} ${s.lastname} — ${s.cardNumber}</div>`).join('');
+  });
+  if(prefilledStudentId){ const s=EliteAcademy.storage.findById(K.students,prefilledStudentId); selectPayStudent(prefilledStudentId, `${s.firstname} ${s.lastname}`); if(prefilledSubject) setTimeout(()=>document.getElementById('paySubject').value=prefilledSubject,0); }
+}
+function selectPayStudent(id,name){
+  document.getElementById('paySelectedStudentId').value=id;
+  document.getElementById('payStudentSearch').value=name;
+  document.getElementById('payStudentResults').innerHTML='';
+  const subs = subscriptionsOfStudent(id);
+  document.getElementById('paySubject').innerHTML = subs.map(su=>`<option value="${su.subject}">${su.subject} — ${EliteAcademy.utils.formatCurrency(su.monthlyFee)}</option>`).join('') || '<option value="">لا اشتراكات</option>';
+  if(subs[0]) document.getElementById('payAmount').value = subs[0].monthlyFee;
+}
+function submitPayment(){
+  const studentId = document.getElementById('paySelectedStudentId').value;
+  const amount = Number(document.getElementById('payAmount').value);
+  const subject = document.getElementById('paySubject').value;
+  if(!studentId||!amount){ showWarning('اختر تلميذًا وأدخل مبلغًا صحيحًا'); return; }
+  const student = EliteAcademy.storage.findById(K.students,studentId);
+  const sub = getData(K.subscriptions).find(su=>su.studentId===studentId&&su.subject===subject);
+  const group = sub?EliteAcademy.storage.findById(K.groups,sub.groupId):null;
+  const receiptNumber = EliteAcademy.finance.generateReceiptNumber();
+  const p = EliteAcademy.storage.saveRecord(K.payments,{receiptNumber,studentId,studentName:`${student.firstname} ${student.lastname}`,cardNumber:student.cardNumber,subject,groupName:group?group.groupName:'',amount,type:'اشتراك شهري',rea
